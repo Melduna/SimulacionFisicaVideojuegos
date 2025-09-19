@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-std::string display_text = "This is a test";
+std::string display_text = "Things have learned to walk that ought to crawl";
 
 
 using namespace physx;
@@ -54,6 +54,8 @@ void initPhysics(bool interactive)
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
+	PxTransform* spheretrans = new PxTransform(0, 0, 0);
+	RegisterRenderItem(new Sphere(spheretrans));
 	}
 
 

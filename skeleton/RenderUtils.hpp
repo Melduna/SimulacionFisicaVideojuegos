@@ -64,4 +64,8 @@ Camera* GetCamera();
 
 physx::PxShape* CreateShape(const physx::PxGeometry& geo, const physx::PxMaterial* mat = nullptr);
 
+class Sphere : public RenderItem {
+public:
+	Sphere(const physx::PxTransform* tr) : RenderItem(CreateShape(physx::PxSphereGeometry(10)), tr, Vector4(1, 1, 1, 1)) {};
+};
 #endif

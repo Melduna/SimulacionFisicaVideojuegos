@@ -30,6 +30,8 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
+Sphere* mysphere;
+
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -54,8 +56,10 @@ void initPhysics(bool interactive)
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
+	
 	PxTransform* spheretrans = new PxTransform(0, 0, 0);
-	RegisterRenderItem(new Sphere(spheretrans));
+	mysphere = new Sphere(spheretrans);
+	RegisterRenderItem(mysphere);
 	}
 
 
@@ -86,6 +90,8 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 	
 	gFoundation->release();
+
+	DeregisterRenderItem(mysphere);
 	}
 
 // Function called when a key is pressed

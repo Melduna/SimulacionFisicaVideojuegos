@@ -32,6 +32,7 @@ ContactReportCallback gContactReportCallback;
 
 Sphere* mysphere;
 
+Particle* myparticle;
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -57,9 +58,10 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 	
-	PxTransform* spheretrans = new PxTransform(0, 0, 0);
-	mysphere = new Sphere(spheretrans);
-	RegisterRenderItem(mysphere);
+	//PxTransform* spheretrans = new PxTransform(0, 0, 0);
+	//mysphere = new Sphere(spheretrans);
+	//RegisterRenderItem(mysphere);
+	myparticle = new Particle(custom::Vector3(0, 0, 0), custom::Vector3(0, 0, 0));
 	}
 
 
@@ -69,7 +71,7 @@ void initPhysics(bool interactive)
 void stepPhysics(bool interactive, double t)
 {
 	PX_UNUSED(interactive);
-
+	myparticle->integrate(t);
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 }
@@ -91,7 +93,7 @@ void cleanupPhysics(bool interactive)
 	
 	gFoundation->release();
 
-	DeregisterRenderItem(mysphere);
+	//DeregisterRenderItem(mysphere);
 	}
 
 // Function called when a key is pressed

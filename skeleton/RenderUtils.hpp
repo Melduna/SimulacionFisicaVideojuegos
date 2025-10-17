@@ -4,6 +4,7 @@
 #include "PxPhysicsAPI.h"
 #include "core.hpp"
 #include "Vector3.h"
+#define GRAVITY 9.8
 
 class RenderItem;
 void RegisterRenderItem(const RenderItem* _item);
@@ -68,21 +69,5 @@ physx::PxShape* CreateShape(const physx::PxGeometry& geo, const physx::PxMateria
 class Sphere : public RenderItem {
 public:
 	Sphere(const physx::PxTransform* tr) : RenderItem(CreateShape(physx::PxSphereGeometry(10)), tr, Vector4(1, 1, 1, 1)) {};
-};
-
-class Particle {
-public:
-	Particle(custom::Vector3 Pos, custom::Vector3 Vel);
-	~Particle();
-
-	void integrate(double t);
-	inline void set_accel(custom::Vector3 acc) { accel = acc; }
-	inline void set_damping(float d) { damping = d; }
-private:
-	custom::Vector3 vel;
-	custom::Vector3 accel;
-	double damping = 0.999;
-	physx::PxTransform pose;
-	RenderItem* renderItem;
 };
 #endif

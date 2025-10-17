@@ -186,24 +186,3 @@ PxShape* CreateShape(const PxGeometry& geo, const PxMaterial* mat)
 	return shape;
 }
 
-Particle::Particle(custom::Vector3 Pos, custom::Vector3 Vel)
-{
-	pose = physx::PxTransform(Pos.converted());
-	renderItem = new Sphere(&pose);
-	vel = Vel;
-	RegisterRenderItem(renderItem);
-	accel = custom::Vector3(0.0, 0.2, 0.0);
-}
-
-Particle::~Particle()
-{
-	DeregisterRenderItem(renderItem);
-}
-
-void Particle::integrate(double t)
-{
-	vel += accel * t;
-	pose.p += vel.converted();
-
-	vel *= damping;
-}

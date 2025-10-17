@@ -7,6 +7,7 @@
 #include "core.hpp"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
+#include "PhysicsObjects.h"
 
 #include <iostream>
 
@@ -32,7 +33,10 @@ ContactReportCallback gContactReportCallback;
 
 Sphere* mysphere;
 
-Particle* myparticle;
+//Particle* myparticle;
+//Projectile* myprojectile;
+
+std::vector<Projectile*> projectiles;
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -61,7 +65,8 @@ void initPhysics(bool interactive)
 	//PxTransform* spheretrans = new PxTransform(0, 0, 0);
 	//mysphere = new Sphere(spheretrans);
 	//RegisterRenderItem(mysphere);
-	myparticle = new Particle(custom::Vector3(0, 0, 0), custom::Vector3(0, 0, 0));
+	//myparticle = new Particle(custom::Vector3(0, 0, 0), custom::Vector3(0, 0, 0));
+	//myprojectile = new Projectile(custom::Vector3(-50, 0, -50), custom::Vector3(0, 10, 0), 2.0, 10.0);
 	}
 
 
@@ -71,7 +76,12 @@ void initPhysics(bool interactive)
 void stepPhysics(bool interactive, double t)
 {
 	PX_UNUSED(interactive);
-	myparticle->integrate(t);
+	//myparticle->integrate(t);
+	//myprojectile->integrate(t);
+	for (auto &p : projectiles) {
+		if (p->is_alive())
+			p->integrate(t);
+	}
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 }
@@ -93,6 +103,9 @@ void cleanupPhysics(bool interactive)
 	
 	gFoundation->release();
 
+	for (auto p : projectiles) {
+		delete p;
+	}
 	//DeregisterRenderItem(mysphere);
 	}
 
@@ -107,6 +120,22 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	//case ' ':	break;
 	case ' ':
 	{
+		break;
+	}
+	case 'Z':
+	{
+		projectile_config temp{
+			{
+				custom::Vector3::convert(GetCamera()->getEye()),
+				custom::Vector3::convert(GetCamera()->getDir()) * 100,
+				0.2
+			},
+			10,
+			100
+
+		};
+		projectiles.push_back(new Projectile(temp));
+		//TODO: Fire projectile
 		break;
 	}
 	default:

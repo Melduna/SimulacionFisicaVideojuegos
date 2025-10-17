@@ -49,5 +49,8 @@ namespace custom {
 		physx::PxVec3 converted() {
 			return physx::PxVec3(x, y, z);
 		}
+		static Vector3 convert(physx::PxVec3 v) {
+			return Vector3(v.x, v.y, v.z);
+		}
 	};
 }

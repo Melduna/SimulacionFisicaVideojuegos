@@ -50,8 +50,3 @@ protected:
 	double speed_factor();
 	custom::Vector3 gravAccel = custom::Vector3(0, 0, 0);
 };
-class ParticleSystem {
-public:
-protected:
-
-};

@@ -7,7 +7,8 @@
 #include "core.hpp"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
-#include "PhysicsObjects.h"
+#include "GameObject.h"
+#include "ParticleSystem.h"
 
 #include <iostream>
 
@@ -31,7 +32,7 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
-Sphere* mysphere;
+ParticleGenerator* firing_system;
 
 //Particle* myparticle;
 //Projectile* myprojectile;
@@ -62,6 +63,19 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 	
+	projectile_config temp{
+			{
+				custom::Vector3::convert(GetCamera()->getEye()),
+				custom::Vector3::convert(GetCamera()->getDir())*10,
+				10.0 //Lifetime
+			},
+			1, //Mass
+			300 //Speed
+	};
+	gen_config temp2(temp, custom::Vector3::convert(GetCamera()->getEye()), custom::Vector3::convert(GetCamera()->getDir()) * 100,1,
+		distribution::NORMAL);
+
+	firing_system = new ParticleGenerator(temp2);
 	//PxTransform* spheretrans = new PxTransform(0, 0, 0);
 	//mysphere = new Sphere(spheretrans);
 	//RegisterRenderItem(mysphere);
@@ -80,8 +94,9 @@ void stepPhysics(bool interactive, double t)
 	//myprojectile->integrate(t);
 	for (auto &p : projectiles) {
 		if (p->is_alive())
-			p->integrate(t);
+			p->step(t);
 	}
+	firing_system->step(t);
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 }
@@ -124,18 +139,19 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	}
 	case 'Z':
 	{
-		projectile_config temp{
-			{
-				custom::Vector3::convert(GetCamera()->getEye()),
-				custom::Vector3::convert(GetCamera()->getDir()) * 100,
-				0.2
-			},
-			10,
-			100
+		//projectile_config temp{
+		//	{
+		//		custom::Vector3::convert(GetCamera()->getEye()),
+		//		custom::Vector3::convert(GetCamera()->getDir()) * 100,
+		//		0.2
+		//	},
+		//	10,
+		//	100
 
-		};
-		projectiles.push_back(new Projectile(temp));
+		//};
+		//projectiles.push_back(new Projectile(temp));
 		//TODO: Fire projectile
+		firing_system->generate(custom::Vector3::convert(GetCamera()->getDir())*10);
 		break;
 	}
 	default:

@@ -11,7 +11,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="Vector3.h" />
-    <ClCompile Include="PhysicsObjects.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -24,7 +25,8 @@
     <ClInclude Include="RenderUtils.hpp" />
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="Distributions.h" />
-    <ClInclude Include="PhysicsObjects.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="ParticleSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

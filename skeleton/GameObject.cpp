@@ -1,13 +1,24 @@
-#include "PhysicsObjects.h"
+#include "GameObject.h"
+
+void GameObject::step(double t)
+{
+	if (lifetime <= 0.0) alive = false;
+	else lifetime -= t;
+}
+
+void GameObject::translate(custom::Vector3 &t)
+{
+	pose.p += t.converted();
+	for (auto c : children) c->translate(t);
+}
 
 Particle::Particle(particle_config c)
 {
 	pose = physx::PxTransform(c.position.converted());
-	_renderItem = new RenderItem(CreateShape(physx::PxSphereGeometry(10)), &pose, Vector4(1, 1, 1, 1));
+	_renderItem = new RenderItem(CreateShape(physx::PxSphereGeometry(10)), &pose, c.color);
 	vel = c.velocity;
 	accel = custom::Vector3(0.0, 0.0, 0.0);
 	lifetime = c.lifetime;
-	remaining_lifetime = lifetime;
 }
 
 Particle::~Particle()
@@ -15,19 +26,23 @@ Particle::~Particle()
 	//renderItem->release();
 	if (_renderItem != nullptr)
 		DeregisterRenderItem(_renderItem);
+
+	for (auto p : children) if (p) delete p;
+	
 }
 
 void Particle::integrate(double t)
 {
 	vel += accel * t;
 	vel *= damping;
-	pose.p += vel.converted();
-	remaining_lifetime -= t;
-	if (remaining_lifetime <= 0.0) {
-		alive = false;
-		DeregisterRenderItem(_renderItem);
-		_renderItem = nullptr;
-	}
+	translate(vel);
+}
+
+void Particle::step(double t)
+{
+	integrate(t);
+	GameObject::step(t);
+	for (auto p : children) if (p) p->step(t);
 }
 
 Projectile::Projectile(projectile_config c) :
@@ -40,6 +55,7 @@ Projectile::Projectile(projectile_config c) :
 
 void Projectile::update_gravity_s()
 {
+	//vs2/vr2
 	gravity_simulated = gravity_real * speed_factor();
 }
 
@@ -60,3 +76,5 @@ double Projectile::speed_factor()
 //	vel *= damping;
 //	pose.p += vel.converted();
 //}
+
+

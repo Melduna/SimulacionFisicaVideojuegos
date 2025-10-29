@@ -1,0 +1,79 @@
+#pragma once
+#include "RenderUtils.hpp"
+#include <memory>
+#include <list>
+struct particle_config {
+	custom::Vector3 position;
+	custom::Vector3 velocity;
+	double lifetime = 1.0;
+	Vector4 color{ 1, 1, 1, 1 };
+	void operator=(particle_config& other) {
+		position = other.position;
+		velocity = other.velocity;
+		lifetime = other.lifetime;
+		color = other.color;
+	}
+};
+struct projectile_config {
+	particle_config p_config;
+	double mass;
+	double speed;
+	double gravity = GRAVITY;
+	void operator=(projectile_config& other) {
+		p_config = other.p_config;
+		mass = other.mass;
+		speed = other.speed;
+		gravity = other.gravity;
+	}
+};
+class GameObject {
+public:
+	GameObject() {};
+	~GameObject() {};
+	inline void add_child(GameObject* p) { children.push_back(p); p->set_parent(this); }
+	inline void set_parent(GameObject* p) { parent = p;  }
+	virtual void step(double t);
+	void translate(custom::Vector3 &t);
+	inline bool is_alive() const { return alive; }
+	inline custom::Vector3 get_position() const { return custom::Vector3::convert(pose.p); }
+protected:
+	custom::Vector3 vel;
+	custom::Vector3 accel;
+	double damping = 0.999;
+	physx::PxTransform pose;
+	double lifetime;
+	bool alive = true;
+	std::list<GameObject*> children;
+	GameObject* parent;
+};
+class Particle: public GameObject {
+public:
+	Particle(particle_config c);
+	~Particle();
+	virtual void step(double t) override;
+	virtual void integrate(double t);
+	inline void set_accel(custom::Vector3 acc) { accel = acc; }
+	inline void set_damping(float d) { damping = d; }
+	inline void set_color(Vector4 c) { _renderItem->color = c; };
+protected:
+	RenderItem* _renderItem;
+};
+
+class Projectile : public Particle {
+public:
+	Projectile(projectile_config c);
+	//~Projectile() = default;
+	inline void add_force(custom::Vector3 force) { accel += force * (1.0 / mass_simulated); };
+	//void integrate(double t) override;
+protected:
+	double mass_real;
+	double mass_simulated;
+	double gravity_real;
+	double gravity_simulated;
+	double speed_real;
+	double speed_simulated;
+	void update_gravity_s();
+	void update_mass_s();
+	double speed_factor();
+	custom::Vector3 gravAccel = custom::Vector3(0, 0, 0);
+};

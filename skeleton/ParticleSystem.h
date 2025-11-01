@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include <random>
+class ForceGenerator;
 enum distribution {
 	UNIFORM,
 	NORMAL,
@@ -38,10 +39,11 @@ public:
 	~ParticleGenerator();
 	virtual void step(double t);
 	GameObject* generate();
-	GameObject* generate(custom::Vector3 dir);
+	void update_direction(custom::Vector3 dir);
+	inline std::list<Projectile*>& get_particles() { return particles; };
 protected:
 	projectile_config pr_config;
-	std::list<Particle*> particles;
+	std::list<Projectile*> particles;
 	custom::Vector3 velocity_avg;
 	double gen_time;
 	double time_since_gen;
@@ -62,8 +64,9 @@ public:
 	~ParticleSystem();
 	inline void add_gen(ParticleGenerator* p) { gens.push_back(p); }
 	inline void fire() { gens.front()->generate(); }
-	inline void fire(custom::Vector3 c) { gens.front()->generate(c); }
+	inline std::list<ParticleGenerator*>& get_gens() { return gens; };
 	void step(double t);
 protected:
 	std::list<ParticleGenerator*> gens;
+	std::list<ForceGenerator*> forces;
 };

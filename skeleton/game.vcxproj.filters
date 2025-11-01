@@ -13,6 +13,7 @@
     <ClCompile Include="Vector3.h" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="ForceGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -27,6 +28,8 @@
     <ClInclude Include="Distributions.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="ForceGenerator.h" />
+    <ClInclude Include="Ship.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

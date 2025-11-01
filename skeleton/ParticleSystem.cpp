@@ -1,5 +1,6 @@
 #include "ParticleSystem.h"
 #include "Distributions.h"
+#include "ForceGenerator.h"
 ParticleGenerator::ParticleGenerator(gen_config g) : 
 pr_config(g.pr_config),
 velocity_avg(g.velocity_avg),
@@ -59,29 +60,9 @@ GameObject* ParticleGenerator::generate(){
 	return aux;
 }
 
-GameObject* ParticleGenerator::generate(custom::Vector3 dir)
+void ParticleGenerator::update_direction(custom::Vector3 dir)
 {
-	Projectile* aux;
-	projectile_config conf_aux = pr_config;
-	conf_aux.p_config.velocity = dir;
-	custom::Vector3 vec_aux;
-	switch (dist) {
-	case NORMAL:
-		vec_aux = custom::Vector3(Distributions::next_normal(), Distributions::next_normal(), Distributions::next_normal());
-		conf_aux.p_config.position += vec_aux;
-		aux = new Projectile(conf_aux);
-		break;
-	case UNIFORM:
-		vec_aux = custom::Vector3(Distributions::next_uniform(), Distributions::next_uniform(), Distributions::next_uniform());
-		conf_aux.p_config.position += vec_aux;
-		aux = new Projectile(conf_aux);
-		break;
-	default:
-		aux = new Projectile(conf_aux);
-		break;
-	}
-	particles.push_back(aux);
-	return aux;
+	pr_config.p_config.velocity = dir;
 }
 
 void TimedParticleGenerator::step(double t)
@@ -110,6 +91,14 @@ void ParticleSystem::step(double t)
 		else {
 			(*it)->step(t);
 			it++;
+		}
+	}
+	for (auto f : forces) {
+		for (auto g : gens) {
+			auto parts = g->get_particles();
+			for (auto p : parts) {
+				f->apply_force(p);
+			}
 		}
 	}
 	/*auto it2 = children.begin();

@@ -9,6 +9,7 @@
 #include "callbacks.hpp"
 #include "GameObject.h"
 #include "ParticleSystem.h"
+#include "Ship.h"
 
 #include <iostream>
 
@@ -33,6 +34,8 @@ PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
 ParticleGenerator* firing_system;
+Ship* ship;
+
 
 //Particle* myparticle;
 //Projectile* myprojectile;
@@ -92,10 +95,6 @@ void stepPhysics(bool interactive, double t)
 	PX_UNUSED(interactive);
 	//myparticle->integrate(t);
 	//myprojectile->integrate(t);
-	for (auto &p : projectiles) {
-		if (p->is_alive())
-			p->step(t);
-	}
 	firing_system->step(t);
 	gScene->simulate(t);
 	gScene->fetchResults(true);
@@ -118,9 +117,6 @@ void cleanupPhysics(bool interactive)
 	
 	gFoundation->release();
 
-	for (auto p : projectiles) {
-		delete p;
-	}
 	//DeregisterRenderItem(mysphere);
 	}
 
@@ -151,7 +147,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		//};
 		//projectiles.push_back(new Projectile(temp));
 		//TODO: Fire projectile
-		firing_system->generate(custom::Vector3::convert(GetCamera()->getDir())*10);
+		firing_system->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 10);
+		firing_system->generate();
 		break;
 	}
 	default:

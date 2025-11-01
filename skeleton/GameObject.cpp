@@ -19,6 +19,7 @@ Particle::Particle(particle_config c)
 	vel = c.velocity;
 	accel = custom::Vector3(0.0, 0.0, 0.0);
 	lifetime = c.lifetime;
+	mass_inverse = 1.0 / mass_simulated;
 }
 
 Particle::~Particle()
@@ -33,9 +34,11 @@ Particle::~Particle()
 
 void Particle::integrate(double t)
 {
+	accel += force_accum * mass_inverse;
 	vel += accel * t;
 	vel *= damping;
 	translate(vel);
+	force_accum = custom::Vector3(0, 0, 0);
 }
 
 void Particle::step(double t)
@@ -62,6 +65,7 @@ void Projectile::update_gravity_s()
 void Projectile::update_mass_s()
 {
 	mass_simulated = mass_simulated * speed_factor();
+	mass_inverse = 1.0 / mass_simulated;
 }
 
 double Projectile::speed_factor()
@@ -69,12 +73,9 @@ double Projectile::speed_factor()
 	return (speed_simulated * speed_simulated) / (speed_real * speed_real);
 }
 
-//void Projectile::integrate(double t)
-//{
-//	custom::Vector3 trueAccel = gravAccel + accel;
-//	vel += trueAccel * t;
-//	vel *= damping;
-//	pose.p += vel.converted();
-//}
+void Projectile::integrate(double t)
+{
+	Particle::integrate(t);
+}
 
 

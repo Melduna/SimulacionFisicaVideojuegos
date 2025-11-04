@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <iostream>
 #include "PxActor.h"
 namespace custom {
 	class Vector3 {
@@ -51,6 +52,9 @@ namespace custom {
 		}
 		static Vector3 convert(physx::PxVec3 v) {
 			return Vector3(v.x, v.y, v.z);
+		}
+		void print() {
+			std::cout << x << " " << y << " " << z << " " << "\n";
 		}
 	};
 }

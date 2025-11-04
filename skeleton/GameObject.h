@@ -6,22 +6,23 @@ struct particle_config {
 	custom::Vector3 position;
 	custom::Vector3 velocity;
 	double lifetime = 1.0;
+	double mass;
+	double size = 10;
 	Vector4 color{ 1, 1, 1, 1 };
 	void operator=(particle_config& other) {
 		position = other.position;
 		velocity = other.velocity;
 		lifetime = other.lifetime;
+		mass = other.mass;
 		color = other.color;
 	}
 };
 struct projectile_config {
 	particle_config p_config;
-	double mass;
 	double speed;
 	double gravity = GRAVITY;
 	void operator=(projectile_config& other) {
 		p_config = other.p_config;
-		mass = other.mass;
 		speed = other.speed;
 		gravity = other.gravity;
 	}
@@ -33,7 +34,7 @@ public:
 	inline void add_child(GameObject* p) { children.push_back(p); p->set_parent(this); }
 	inline void set_parent(GameObject* p) { parent = p; }
 	virtual void step(double t);
-	void translate(custom::Vector3 &t);
+	void translate(custom::Vector3 t);
 	inline bool is_alive() const { return alive; }
 	inline custom::Vector3 get_position() const { return custom::Vector3::convert(pose.p); }
 	inline void set_position(custom::Vector3 tr) { translate(custom::Vector3::convert(pose.p) - tr); }
@@ -44,6 +45,7 @@ protected:
 	physx::PxTransform pose;
 	double lifetime;
 	bool alive = true;
+	bool timed = false;
 	std::list<GameObject*> children;
 	GameObject* parent;
 };
@@ -66,6 +68,8 @@ protected:
 	double mass_simulated;
 	double mass_inverse;
 	double gravity_simulated;
+	double speed_simulated;
+
 	custom::Vector3 force_accum = custom::Vector3(0, 0, 0);
 
 };
@@ -79,8 +83,6 @@ protected:
 	double mass_real;
 	double gravity_real;
 	double speed_real;
-	double speed_simulated;
-	double wind_coef = 1.0;
 	void update_gravity_s();
 	void update_mass_s();
 	double speed_factor();

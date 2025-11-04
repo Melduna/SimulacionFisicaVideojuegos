@@ -2,11 +2,14 @@
 
 void GameObject::step(double t)
 {
-	if (lifetime <= 0.0) alive = false;
-	else lifetime -= t;
+	if (timed) {
+		if (lifetime <= 0.0) alive = false;
+		else lifetime -= t;
+	}
+	for (auto p : children) if (p) p->step(t);
 }
 
-void GameObject::translate(custom::Vector3 &t)
+void GameObject::translate(custom::Vector3 t)
 {
 	pose.p += t.converted();
 	for (auto c : children) c->translate(t);
@@ -14,12 +17,15 @@ void GameObject::translate(custom::Vector3 &t)
 
 Particle::Particle(particle_config c)
 {
+	timed = true;
 	pose = physx::PxTransform(c.position.converted());
-	_renderItem = new RenderItem(CreateShape(physx::PxSphereGeometry(10)), &pose, c.color);
+	_renderItem = new RenderItem(CreateShape(physx::PxSphereGeometry(c.size)), &pose, c.color);
 	vel = c.velocity;
 	accel = custom::Vector3(0.0, 0.0, 0.0);
 	lifetime = c.lifetime;
-	mass_inverse = 1.0 / mass_simulated;
+	mass_simulated = c.mass;
+	speed_simulated = c.velocity.mod();
+	mass_inverse = 1.0 / c.mass;
 }
 
 Particle::~Particle()
@@ -45,12 +51,13 @@ void Particle::step(double t)
 {
 	integrate(t);
 	GameObject::step(t);
-	for (auto p : children) if (p) p->step(t);
 }
 
 Projectile::Projectile(projectile_config c) :
-	Particle(c.p_config), mass_real(c.mass), speed_real(c.speed), gravity_real(c.gravity), speed_simulated(c.p_config.velocity.mod())
+	Particle(c.p_config), gravity_real(c.gravity)
 {
+	mass_real = c.p_config.mass;
+	speed_real = c.speed;
 	update_mass_s();
 	update_gravity_s();
 	set_accel(custom::Vector3(0, -gravity_simulated, 0));
@@ -65,7 +72,8 @@ void Projectile::update_gravity_s()
 void Projectile::update_mass_s()
 {
 	mass_simulated = mass_simulated * speed_factor();
-	mass_inverse = 1.0 / mass_simulated;
+	if (mass_simulated == 0) mass_inverse = mass_simulated;
+	else mass_inverse = 1.0 / mass_simulated;
 }
 
 double Projectile::speed_factor()

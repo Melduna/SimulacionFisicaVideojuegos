@@ -33,14 +33,13 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
-ParticleGenerator* firing_system;
 Ship* ship;
 
 
 //Particle* myparticle;
 //Projectile* myprojectile;
 
-std::vector<Projectile*> projectiles;
+//std::vector<Projectile*> projectiles;
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -66,19 +65,20 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 	
-	projectile_config temp{
+	projectile_config ship_conf{
 			{
-				custom::Vector3::convert(GetCamera()->getEye()),
-				custom::Vector3::convert(GetCamera()->getDir())*10,
-				10.0 //Lifetime
+				custom::Vector3(-100,0,-100),
+				custom::Vector3(0.0,0.0,0.0),
+				1.0,
+				10,
+				20,
+				{1,1,1,1}
 			},
-			1, //Mass
-			300 //Speed
+			300, //Speed,
+			0.0
 	};
-	gen_config temp2(temp, custom::Vector3::convert(GetCamera()->getEye()), custom::Vector3::convert(GetCamera()->getDir()) * 100,1,
-		distribution::NORMAL);
+	ship = new Ship(ship_conf);
 
-	firing_system = new ParticleGenerator(temp2);
 	//PxTransform* spheretrans = new PxTransform(0, 0, 0);
 	//mysphere = new Sphere(spheretrans);
 	//RegisterRenderItem(mysphere);
@@ -93,9 +93,11 @@ void initPhysics(bool interactive)
 void stepPhysics(bool interactive, double t)
 {
 	PX_UNUSED(interactive);
+	ship->step(t);
+
 	//myparticle->integrate(t);
 	//myprojectile->integrate(t);
-	firing_system->step(t);
+	//firing_system->step(t);
 	gScene->simulate(t);
 	gScene->fetchResults(true);
 }
@@ -117,6 +119,7 @@ void cleanupPhysics(bool interactive)
 	
 	gFoundation->release();
 
+	delete ship;
 	//DeregisterRenderItem(mysphere);
 	}
 
@@ -146,9 +149,10 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 		//};
 		//projectiles.push_back(new Projectile(temp));
-		//TODO: Fire projectile
-		firing_system->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 10);
-		firing_system->generate();
+		////TODO: Fire projectile
+		//firing_system->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 10);
+		//firing_system->generate();
+		ship->fire();
 		break;
 	}
 	default:

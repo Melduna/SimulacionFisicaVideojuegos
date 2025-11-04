@@ -33,6 +33,7 @@ struct gen_config {
 	};
 };
 
+class ForceGenerator;
 class ParticleGenerator : public GameObject {
 public:
 	ParticleGenerator(gen_config g);
@@ -63,6 +64,7 @@ public:
 	ParticleSystem() {}
 	~ParticleSystem();
 	inline void add_gen(ParticleGenerator* p) { gens.push_back(p); }
+	inline void add_force(ForceGenerator* p) { forces.push_back(p); }
 	inline void fire() { gens.front()->generate(); }
 	inline std::list<ParticleGenerator*>& get_gens() { return gens; };
 	void step(double t);

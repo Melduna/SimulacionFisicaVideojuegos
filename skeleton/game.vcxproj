@@ -262,7 +262,6 @@
     <ClCompile Include="RenderUtils.cpp" />
     <ClCompile Include="Render\Camera.cpp" />
     <ClCompile Include="Render\Render.cpp" />
-    <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Vector3.h" />
   </ItemGroup>
   <ItemGroup>

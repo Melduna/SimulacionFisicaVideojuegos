@@ -68,6 +68,7 @@ public:
 	inline void fire() { gens.front()->generate(); }
 	inline std::list<ParticleGenerator*>& get_gens() { return gens; };
 	void step(double t);
+	void translate(custom::Vector3 t) override;
 protected:
 	std::list<ParticleGenerator*> gens;
 	std::list<ForceGenerator*> forces;

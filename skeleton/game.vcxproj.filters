@@ -14,7 +14,6 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="ForceGenerator.cpp" />
-    <ClCompile Include="Ship.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />

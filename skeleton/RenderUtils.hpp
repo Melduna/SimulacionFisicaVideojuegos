@@ -68,6 +68,6 @@ physx::PxShape* CreateShape(const physx::PxGeometry& geo, const physx::PxMateria
 
 class Sphere : public RenderItem {
 public:
-	Sphere(const physx::PxTransform* tr) : RenderItem(CreateShape(physx::PxSphereGeometry(10)), tr, Vector4(1, 1, 1, 1)) {};
+	Sphere(const physx::PxTransform* tr, double size, Vector4 color = {1,1,1,1}) : RenderItem(CreateShape(physx::PxSphereGeometry(size)), tr, color) {};
 };
 #endif

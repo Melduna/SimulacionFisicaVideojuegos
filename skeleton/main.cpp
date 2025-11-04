@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-std::string display_text = "Things have learned to walk that ought to crawl";
+std::string display_text = "";
 
 
 using namespace physx;
@@ -67,8 +67,8 @@ void initPhysics(bool interactive)
 	
 	projectile_config ship_conf{
 			{
-				custom::Vector3(-100,0,-100),
-				custom::Vector3(0.0,0.0,0.0),
+				custom::Vector3(-200,0,-100),
+				custom::Vector3::blank(),
 				1.0,
 				10,
 				20,
@@ -127,8 +127,9 @@ void cleanupPhysics(bool interactive)
 void keyPress(unsigned char key, const PxTransform& camera)
 {
 	PX_UNUSED(camera);
+	char temp = toupper(key);
 
-	switch(toupper(key))
+	switch(temp)
 	{
 	//case 'B': break;
 	//case ' ':	break;
@@ -155,6 +156,18 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		ship->fire();
 		break;
 	}
+	case 'I':
+		ship->set_accel(UP);
+		break;
+	case 'J':
+		ship->set_accel(LEFT);
+		break;
+	case 'K':
+		ship->set_accel(DOWN);
+		break;
+	case 'L':
+		ship->set_accel(RIGHT);
+		break;
 	default:
 		break;
 	}

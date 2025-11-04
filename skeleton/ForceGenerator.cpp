@@ -13,7 +13,7 @@ void WindGen::apply_force(Projectile* p)
 	auto distance = (p->get_position() - custom::Vector3::convert(pose.p)).mod();
 	//std::cout << distance << "\n";
 	if (distance <= radius) {
-		custom::Vector3 force = ((direction - vel) * resistance + ((direction - vel) * ((direction - vel).mod()) * turbulence))*0.00001;
+		custom::Vector3 force = ((direction - vel) * resistance + ((direction - vel) * ((direction - vel).mod()) * turbulence));
 		//force.print();
 		p->add_force(force);
 	}

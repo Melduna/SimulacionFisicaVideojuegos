@@ -44,8 +44,9 @@ namespace custom {
 		void normalize() {
 			*this = (*this * (1.0f / this->mod()));
 		}
-		Vector3 normalized(Vector3& vec) {
-			return (*this * (1.0f / vec.mod()));
+		Vector3 normalized() {
+			if (this->mod() < 0.0001) return *this;
+			return (*this * (1.0f / mod()));
 		}
 		physx::PxVec3 converted() {
 			return physx::PxVec3(x, y, z);
@@ -55,6 +56,9 @@ namespace custom {
 		}
 		void print() {
 			std::cout << x << " " << y << " " << z << " " << "\n";
+		}
+		static Vector3 blank() {
+			return Vector3(0, 0, 0);
 		}
 	};
 }

@@ -40,6 +40,7 @@ void ParticleGenerator::step(double t)
 GameObject* ParticleGenerator::generate(){
 	Projectile* aux;
 	projectile_config conf_aux = pr_config;
+	conf_aux.p_config.position += custom::Vector3::convert(pose.p);
 	custom::Vector3 vec_aux;
 	switch (dist) {
 	case NORMAL:
@@ -113,4 +114,15 @@ void ParticleSystem::step(double t)
 		}
 	}*/
 	GameObject::step(t);
+}
+
+void ParticleSystem::translate(custom::Vector3 t)
+{
+	for (auto f : forces) {
+		if (f) f->translate(t);
+	}
+	for (auto g : gens) {
+		if (g) g->translate(t);
+	}
+	GameObject::translate(t);
 }

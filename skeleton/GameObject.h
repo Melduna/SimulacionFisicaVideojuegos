@@ -34,7 +34,7 @@ public:
 	inline void add_child(GameObject* p) { children.push_back(p); p->set_parent(this); }
 	inline void set_parent(GameObject* p) { parent = p; }
 	virtual void step(double t);
-	void translate(custom::Vector3 t);
+	virtual void translate(custom::Vector3 t);
 	inline bool is_alive() const { return alive; }
 	inline custom::Vector3 get_position() const { return custom::Vector3::convert(pose.p); }
 	inline void set_position(custom::Vector3 tr) { translate(custom::Vector3::convert(pose.p) - tr); }
@@ -69,8 +69,9 @@ protected:
 	double mass_inverse;
 	double gravity_simulated;
 	double speed_simulated;
+	double max_speed = -1.0;
 
-	custom::Vector3 force_accum = custom::Vector3(0, 0, 0);
+	custom::Vector3 force_accum = custom::Vector3::blank();
 
 };
 
@@ -86,5 +87,5 @@ protected:
 	void update_gravity_s();
 	void update_mass_s();
 	double speed_factor();
-	custom::Vector3 gravAccel = custom::Vector3(0, 0, 0);
+	custom::Vector3 gravAccel = custom::Vector3::blank();
 };

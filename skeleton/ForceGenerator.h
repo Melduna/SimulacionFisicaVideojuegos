@@ -27,8 +27,9 @@ protected:
 };
 class WindGen :public ForceGenerator {
 public:
-	inline WindGen(custom::Vector3 center, custom::Vector3 d = custom::Vector3(0, 0, 0), double re = 0.5, double t = 0.0, double ra = 50.0) :direction(d), resistance(re), turbulence(t), radius(ra) { pose.p = center.converted(); };
+	inline WindGen(custom::Vector3 center, custom::Vector3 d = custom::Vector3::blank(), double re = 0.0001, double t = 0.0, double ra = 50.0) :resistance(re), turbulence(t), radius(ra) { pose.p = center.converted(); direction = d.normalized(); };
 	void apply_force(Projectile*) override;
+	inline void redirect(custom::Vector3 v) { direction = v.normalized(); };
 protected:
 	custom::Vector3 direction;
 	double resistance;

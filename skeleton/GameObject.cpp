@@ -19,9 +19,9 @@ Particle::Particle(particle_config c)
 {
 	timed = true;
 	pose = physx::PxTransform(c.position.converted());
-	_renderItem = new RenderItem(CreateShape(physx::PxSphereGeometry(c.size)), &pose, c.color);
+	_renderItem = new Sphere(&pose,c.size,c.color);
 	vel = c.velocity;
-	accel = custom::Vector3(0.0, 0.0, 0.0);
+	accel = custom::Vector3::blank();
 	lifetime = c.lifetime;
 	mass_simulated = c.mass;
 	speed_simulated = c.velocity.mod();
@@ -43,8 +43,13 @@ void Particle::integrate(double t)
 	accel += force_accum * mass_inverse;
 	vel += accel * t;
 	vel *= damping;
+	if (max_speed >= 0 && max_speed < vel.mod()) {
+		vel.normalize();
+		vel *= max_speed*0.9;
+		accel = custom::Vector3::blank();
+	}
 	translate(vel);
-	force_accum = custom::Vector3(0, 0, 0);
+	force_accum = custom::Vector3::blank();
 }
 
 void Particle::step(double t)
@@ -71,8 +76,8 @@ void Projectile::update_gravity_s()
 
 void Projectile::update_mass_s()
 {
-	mass_simulated = mass_simulated * speed_factor();
-	if (mass_simulated == 0) mass_inverse = mass_simulated;
+	mass_simulated = mass_real * speed_factor();
+	if (mass_simulated == 0) mass_inverse = 1.0/mass_real;
 	else mass_inverse = 1.0 / mass_simulated;
 }
 

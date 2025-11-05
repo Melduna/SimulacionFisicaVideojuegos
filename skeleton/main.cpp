@@ -33,8 +33,23 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
-Ship* ship;
+Ship* ship = nullptr;
 
+ParticleGenerator* camera_shot = nullptr;
+
+void create_ship() {
+	camera_shot->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 10);
+	camera_shot->generate();
+	particle_config ship_conf{
+		custom::Vector3(-200,0,-100),
+		custom::Vector3::blank(),
+		1.0,
+		10,
+		20,
+		{1,1,1,1}
+	};
+	ship = new Ship(ship_conf);
+}
 
 //Particle* myparticle;
 //Projectile* myprojectile;
@@ -64,17 +79,20 @@ void initPhysics(bool interactive)
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
-	
-	particle_config ship_conf{
-			custom::Vector3(-200,0,-100),
-			custom::Vector3::blank(),
-			1.0,
-			10,
-			20,
-			{1,1,1,1}
-	};
-	ship = new Ship(ship_conf);
 
+	projectile_config temp{
+		{
+			custom::Vector3::blank(),
+			custom::Vector3::convert(GetCamera()->getDir()) * 100,
+			2.0, //Lifetime
+			1, //Mass
+		},
+		300 //Speed
+	};
+	gen_config temp2(temp, custom::Vector3::convert(GetCamera()->getEye()), custom::Vector3::convert(GetCamera()->getDir()) * 10, 1,
+		distribution::NORMAL);
+
+	camera_shot = new ParticleGenerator(temp2);
 	//PxTransform* spheretrans = new PxTransform(0, 0, 0);
 	//mysphere = new Sphere(spheretrans);
 	//RegisterRenderItem(mysphere);
@@ -89,8 +107,8 @@ void initPhysics(bool interactive)
 void stepPhysics(bool interactive, double t)
 {
 	PX_UNUSED(interactive);
-	ship->step(t);
-
+	if (ship) ship->step(t);
+	camera_shot->step(t);
 	//myparticle->integrate(t);
 	//myprojectile->integrate(t);
 	//firing_system->step(t);
@@ -116,6 +134,7 @@ void cleanupPhysics(bool interactive)
 	gFoundation->release();
 
 	delete ship;
+	delete camera_shot;
 	//DeregisterRenderItem(mysphere);
 	}
 
@@ -149,23 +168,24 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		////TODO: Fire projectile
 		//firing_system->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 10);
 		//firing_system->generate();
-		ship->fire();
+		if (ship) ship->fire();
+		else create_ship();
 		break;
 	}
 	case'X':
-		ship->blast();
+		if (ship) ship->blast();
 		break;
 	case 'I':
-		ship->set_accel(UP);
+		if (ship) ship->set_accel(UP);
 		break;
 	case 'J':
-		ship->set_accel(LEFT);
+		if (ship) ship->set_accel(LEFT);
 		break;
 	case 'K':
-		ship->set_accel(DOWN);
+		if (ship) ship->set_accel(DOWN);
 		break;
 	case 'L':
-		ship->set_accel(RIGHT);
+		if (ship) ship->set_accel(RIGHT);
 		break;
 	default:
 		break;

@@ -156,6 +156,9 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		ship->fire();
 		break;
 	}
+	case'X':
+		ship->blast();
+		break;
 	case 'I':
 		ship->set_accel(UP);
 		break;

@@ -37,28 +37,29 @@ void ParticleGenerator::step(double t)
 	GameObject::step(t);
 }
 
-GameObject* ParticleGenerator::generate(){
-	Projectile* aux;
-	projectile_config conf_aux = pr_config;
-	conf_aux.p_config.position += custom::Vector3::convert(pose.p);
-	custom::Vector3 vec_aux;
-	switch (dist) {
-	case NORMAL:
-		vec_aux = custom::Vector3(Distributions::next_normal(), Distributions::next_normal(), Distributions::next_normal());
-		conf_aux.p_config.position+=vec_aux;
-		aux = new Projectile(conf_aux);
-		break;
-	case UNIFORM:
-		vec_aux = custom::Vector3(Distributions::next_uniform(), Distributions::next_uniform(), Distributions::next_uniform());
-		conf_aux.p_config.position += vec_aux;
-		aux = new Projectile(conf_aux);
-		break;
-	default:
-		aux = new Projectile(conf_aux);
-		break;
+void ParticleGenerator::generate(){
+	for (int i = 0; i < gen_count;i++) {
+		Projectile* aux;
+		projectile_config conf_aux = pr_config;
+		conf_aux.p_config.position += custom::Vector3::convert(pose.p);
+		custom::Vector3 vec_aux;
+		switch (dist) {
+		case NORMAL:
+			vec_aux = custom::Vector3(Distributions::next_normal(), Distributions::next_normal(), Distributions::next_normal());
+			conf_aux.p_config.position += vec_aux;
+			aux = new Projectile(conf_aux);
+			break;
+		case UNIFORM:
+			vec_aux = custom::Vector3(Distributions::next_uniform(), Distributions::next_uniform(), Distributions::next_uniform());
+			conf_aux.p_config.position += vec_aux - custom::Vector3(0.5,0.5,0.5);
+			aux = new Projectile(conf_aux);
+			break;
+		default:
+			aux = new Projectile(conf_aux);
+			break;
+		}
+		particles.push_back(aux);
 	}
-	particles.push_back(aux);
-	return aux;
 }
 
 void ParticleGenerator::update_direction(custom::Vector3 dir)
@@ -94,14 +95,31 @@ void ParticleSystem::step(double t)
 			it++;
 		}
 	}
-	for (auto f : forces) {
+	auto it2 = forces.begin();
+	while (it2 != forces.end()) {
+		if (!(*it2)->is_alive()) {
+			delete* it2;
+			it2 = forces.erase(it2);
+		}
+		else {
+			(*it2)->step(t);
+			for (auto &g : gens) {
+				auto parts = g->get_particles();
+				for (auto p : parts) {
+					(*it2)->apply_force(p);
+				}
+			}
+			it2++;
+		}
+	}
+	/*for (auto f : forces) {
 		for (auto g : gens) {
 			auto parts = g->get_particles();
 			for (auto p : parts) {
 				f->apply_force(p);
 			}
 		}
-	}
+	}*/
 	/*auto it2 = children.begin();
 	while (it2 != children.end()) {
 		if (!(*it2)->is_alive() || ((*it)->get_position() - position).mod() > interest_range) {

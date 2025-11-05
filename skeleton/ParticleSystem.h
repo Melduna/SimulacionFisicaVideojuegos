@@ -39,7 +39,7 @@ public:
 	ParticleGenerator(gen_config g);
 	~ParticleGenerator();
 	virtual void step(double t);
-	GameObject* generate();
+	void generate();
 	void update_direction(custom::Vector3 dir);
 	inline std::list<Projectile*>& get_particles() { return particles; };
 protected:
@@ -66,6 +66,14 @@ public:
 	inline void add_gen(ParticleGenerator* p) { gens.push_back(p); }
 	inline void add_force(ForceGenerator* p) { forces.push_back(p); }
 	inline void fire() { gens.front()->generate(); }
+	inline void fire_at(int index) {
+		int i = 0;
+		auto it = gens.begin();
+		while (it != gens.end() && i < index) {
+			i++;
+		}
+		if (it != gens.end()) (*it)->generate();
+	}
 	inline std::list<ParticleGenerator*>& get_gens() { return gens; };
 	void step(double t);
 	void translate(custom::Vector3 t) override;

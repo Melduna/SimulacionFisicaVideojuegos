@@ -21,11 +21,14 @@ void WindGen::apply_force(Projectile* p)
 
 void ExplosionGen::apply_force(Projectile* p)
 {
-	auto vec = (p->get_direction() - custom::Vector3::convert(pose.p));
-	if (vec.mod() <= radius) {
-		custom::Vector3 force = vec * (intensity / (radius * radius)) * pow(CONST_E, -(timer / constant));
+	double time_elapsed = max_time - lifetime;
+	double current_radius = (start_radius + end_radius) / max_time * (time_elapsed);
+	auto vec = (p->get_position() - startpos);
+	if (vec.mod() <= current_radius) {
+		custom::Vector3 force = vec * (intensity / (current_radius * current_radius)) * pow(CONST_E, -(time_elapsed / constant));
 		p->add_force(force);
 	}
+	
 }
 
 void VortexGen::apply_force(Projectile*)

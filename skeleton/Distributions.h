@@ -3,8 +3,8 @@
 class Distributions {
 public:
 	Distributions() {
-		unif = std::uniform_real_distribution<double>{ -0.5,0.5 };
-		norm = std::normal_distribution<double>{ 0.0,1.0 };
+		unif = std::uniform_real_distribution<double>(0.0, 1.0);
+		norm = std::normal_distribution<double>(0.0, 1.0);
 		std::random_device rd;
 		seed = std::mt19937(rd());
 	};

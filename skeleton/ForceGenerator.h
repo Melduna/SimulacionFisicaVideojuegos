@@ -44,12 +44,20 @@ protected:
 };
 class ExplosionGen :public ForceGenerator {
 public:
-	inline ExplosionGen(custom::Vector3 p) { pose.p = p.converted(); }
+	inline ExplosionGen(custom::Vector3 p, double i = 50.0, double t = 5.0, double r = 50.0, double R = 200.0)
+		:start_radius(r),end_radius(R), intensity(i) 
+	{
+		max_time = lifetime = t;
+		startpos = p;
+		pose.p = p.converted(); timed = true;
+	}
+	void step(double t) override { GameObject::step(t); }
 	void apply_force(Projectile*) override;
-	void step(double dt) override { timer += dt; };
 protected:
-	double radius = 100.0;
+	custom::Vector3 startpos;
+	double max_time;
+	double start_radius;
+	double end_radius;
 	double intensity = 50.0;
 	const double constant = 1.0;
-	double timer = 0.0;
 };

@@ -54,7 +54,7 @@ public:
 		blast_system->add_gen(new ParticleGenerator(gen2));
 
 		firing_system->add_force(new WindGen(custom::Vector3::convert(pose.p), custom::Vector3(10, 0, 0)));
-		drag = new WindGen(custom::Vector3::convert(pose.p),custom::Vector3::blank(), 0.05);
+		drag = new WindGen(custom::Vector3::convert(pose.p), custom::Vector3::blank(), 0.02);
 		max_speed = 3.0;
 	}
 	~Ship() {

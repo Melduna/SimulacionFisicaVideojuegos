@@ -26,6 +26,7 @@ Particle::Particle(particle_config c)
 	mass_simulated = c.mass;
 	speed_simulated = c.velocity.mod();
 	mass_inverse = 1.0 / c.mass;
+	gravity_simulated = c.gravity;
 }
 
 Particle::~Particle()
@@ -41,7 +42,8 @@ Particle::~Particle()
 void Particle::integrate(double t)
 {
 	accel += force_accum * mass_inverse;
-	vel += accel * t;
+	custom::Vector3 trueAccel = accel + custom::Vector3(0.0,-gravity_simulated,0.0);
+	vel += trueAccel * t;
 	vel *= damping;
 	if (max_speed >= 0 && max_speed < vel.mod()) {
 		vel.normalize();
@@ -59,7 +61,7 @@ void Particle::step(double t)
 }
 
 Projectile::Projectile(projectile_config c) :
-	Particle(c.p_config), gravity_real(c.gravity)
+	Particle(c.p_config), gravity_real(c.p_config.gravity)
 {
 	mass_real = c.p_config.mass;
 	speed_real = c.speed;
@@ -86,9 +88,6 @@ double Projectile::speed_factor()
 	return (speed_simulated * speed_simulated) / (speed_real * speed_real);
 }
 
-void Projectile::integrate(double t)
-{
-	Particle::integrate(t);
-}
+
 
 

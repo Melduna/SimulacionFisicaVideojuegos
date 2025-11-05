@@ -7,16 +7,10 @@ public:
 	~ForceGenerator() = default;
 	virtual void apply_force(Particle*) = 0;
 	virtual void step(double dt) {};
-	inline void apply_on_targets(ParticleSystem* s) {
-		auto& aux = s->get_gens();
-		for (auto g : aux) {
-			auto& parts = g->get_particles();
-			for (auto p : parts) {
-				apply_force(p);
-			}
-		}
-	}
+	inline bool get_active() const { return active; }
+	inline void set_active(bool a) { active = a; }
 protected:
+	bool active = true;
 };
 class GravityGen :public ForceGenerator {
 public:

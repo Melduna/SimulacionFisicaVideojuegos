@@ -8,6 +8,7 @@ struct particle_config {
 	double lifetime = 1.0;
 	double mass;
 	double size = 10;
+	double gravity = GRAVITY;
 	Vector4 color{ 1, 1, 1, 1 };
 	void operator=(particle_config& other) {
 		position = other.position;
@@ -15,16 +16,15 @@ struct particle_config {
 		lifetime = other.lifetime;
 		mass = other.mass;
 		color = other.color;
+		gravity = other.gravity;
 	}
 };
 struct projectile_config {
 	particle_config p_config;
 	double speed;
-	double gravity = GRAVITY;
 	void operator=(projectile_config& other) {
 		p_config = other.p_config;
 		speed = other.speed;
-		gravity = other.gravity;
 	}
 };
 class GameObject {
@@ -79,7 +79,6 @@ class Projectile : public Particle {
 public:
 	Projectile(projectile_config c);
 	//~Projectile() = default;
-	void integrate(double t) override;
 protected:
 	double mass_real;
 	double gravity_real;

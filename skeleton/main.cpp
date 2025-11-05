@@ -46,6 +46,7 @@ void create_ship() {
 		1.0,
 		10,
 		20,
+		0.0,
 		{1,1,1,1}
 	};
 	ship = new Ship(ship_conf);
@@ -83,16 +84,16 @@ void initPhysics(bool interactive)
 	projectile_config temp{
 		{
 			custom::Vector3::blank(),
-			custom::Vector3::convert(GetCamera()->getDir()) * 100,
+			custom::Vector3::convert(GetCamera()->getDir()) * 10,
 			2.0, //Lifetime
 			1, //Mass
 		},
 		300 //Speed
 	};
-	gen_config temp2(temp, custom::Vector3::convert(GetCamera()->getEye()), custom::Vector3::convert(GetCamera()->getDir()) * 10, 1,
+	gen_config temp2(custom::Vector3::convert(GetCamera()->getEye()), 1,
 		distribution::NORMAL);
 
-	camera_shot = new ParticleGenerator(temp2);
+	camera_shot = new ProjectileGenerator(temp2,temp);
 	//PxTransform* spheretrans = new PxTransform(0, 0, 0);
 	//mysphere = new Sphere(spheretrans);
 	//RegisterRenderItem(mysphere);
@@ -186,6 +187,12 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		break;
 	case 'L':
 		if (ship) ship->set_accel(RIGHT);
+		break;
+	case 'Q':
+		if (ship) ship->toggle_drag();
+		break;
+	case 'E':
+		if (ship) ship->toggle_bullet_drag();
 		break;
 	default:
 		break;

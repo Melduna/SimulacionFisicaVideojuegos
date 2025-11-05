@@ -1,10 +1,8 @@
 #include "ParticleSystem.h"
 #include "Distributions.h"
 #include "ForceGenerator.h"
-ParticleGenerator::ParticleGenerator(gen_config g) : 
-pr_config(g.pr_config),
-velocity_avg(g.velocity_avg),
-gen_time(g.gen_time),
+ParticleGenerator::ParticleGenerator(gen_config g, particle_config pa) : 
+pa_config(pa),
 gen_count(g.gen_count),
 dist(g.dist),
 interest_range(g.interest_range)
@@ -39,32 +37,26 @@ void ParticleGenerator::step(double t)
 
 void ParticleGenerator::generate(){
 	for (int i = 0; i < gen_count;i++) {
-		Projectile* aux;
-		projectile_config conf_aux = pr_config;
-		conf_aux.p_config.position += custom::Vector3::convert(pose.p);
-		custom::Vector3 vec_aux;
-		switch (dist) {
-		case NORMAL:
+		Particle* aux;
+		particle_config conf_aux = pa_config;
+		conf_aux.position += custom::Vector3::convert(pose.p);
+		custom::Vector3 vec_aux = custom::Vector3::blank();
+		if (dist == NORMAL)
 			vec_aux = custom::Vector3(Distributions::next_normal(), Distributions::next_normal(), Distributions::next_normal());
-			conf_aux.p_config.position += vec_aux;
-			aux = new Projectile(conf_aux);
-			break;
-		case UNIFORM:
+		else if (dist == UNIFORM)
 			vec_aux = custom::Vector3(Distributions::next_uniform(), Distributions::next_uniform(), Distributions::next_uniform());
-			conf_aux.p_config.position += vec_aux - custom::Vector3(0.5,0.5,0.5);
-			aux = new Projectile(conf_aux);
-			break;
-		default:
-			aux = new Projectile(conf_aux);
-			break;
-		}
+		else if (dist == AMPLE_NORMAL)
+			vec_aux = custom::Vector3(Distributions::next_ample_normal(), Distributions::next_ample_normal(), Distributions::next_ample_normal());
+		conf_aux.position += vec_aux - custom::Vector3(0.5, 0.5, 0.5);
+		aux = new Particle(conf_aux);
+
 		particles.push_back(aux);
 	}
 }
 
 void ParticleGenerator::update_direction(custom::Vector3 dir)
 {
-	pr_config.p_config.velocity = dir;
+	pa_config.velocity = dir;
 }
 
 void TimedParticleGenerator::step(double t)
@@ -79,7 +71,6 @@ void TimedParticleGenerator::step(double t)
 
 ParticleSystem::~ParticleSystem()
 {
-	for (auto gen : gens) if (gen) delete gen;
 }
 
 void ParticleSystem::step(double t)
@@ -143,4 +134,32 @@ void ParticleSystem::translate(custom::Vector3 t)
 		if (g) g->translate(t);
 	}
 	GameObject::translate(t);
+}
+
+ProjectileGenerator::ProjectileGenerator(gen_config g, projectile_config pr): ParticleGenerator(g,pr.p_config),pr_config(pr)
+{
+}
+
+void ProjectileGenerator::update_direction(custom::Vector3 dir)
+{
+	pr_config.p_config.velocity = dir;
+}
+
+void ProjectileGenerator::generate()
+{
+	for (int i = 0; i < gen_count;i++) {
+		Projectile* aux;
+		projectile_config conf_aux = pr_config;
+		conf_aux.p_config.position += custom::Vector3::convert(pose.p);
+		custom::Vector3 vec_aux = custom::Vector3::blank();
+		if (dist == NORMAL)
+			vec_aux = custom::Vector3(Distributions::next_normal(), Distributions::next_normal(), Distributions::next_normal());
+		else if (dist == UNIFORM)
+			vec_aux = custom::Vector3(Distributions::next_uniform(), Distributions::next_uniform(), Distributions::next_uniform());
+		else if (dist == AMPLE_NORMAL)
+			vec_aux = custom::Vector3(Distributions::next_ample_normal(), Distributions::next_ample_normal(), Distributions::next_ample_normal());
+		conf_aux.p_config.position += vec_aux - custom::Vector3(0.5, 0.5, 0.5);
+		aux = new Projectile(conf_aux);
+		particles.push_back(aux);
+	}
 }

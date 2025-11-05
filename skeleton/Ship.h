@@ -29,31 +29,44 @@ public:
 			custom::Vector3(-10,0,0),
 			1.0,
 			1.0,
-			5,
+			10.0,
+			GRAVITY,
 			{1,0,0,1}
 		},
 		300 //Speed
 		};
-		gen_config gen1(proj1, custom::Vector3::convert(pose.p), custom::Vector3(100,0,0), 1,
+		gen_config gen1(custom::Vector3::convert(pose.p), 1,
 			distribution::NORMAL);
-		firing_system->add_gen(new ParticleGenerator(gen1)); //Primary fire
+		firing_system->add_gen(new ProjectileGenerator(gen1,proj1)); //Primary fire
+		particle_config exhaust{
+			custom::Vector3::blank(),
+			custom::Vector3(3.0,0.0,0.0),
+			0.3,
+			0.1,
+			3.0,
+			0.0,
+			{0.5,0.5,0.5,0.5}
+		};
+		gen_config exhgen( custom::Vector3::convert(pose.p),1,AMPLE_NORMAL,200.0);
+		firing_system->add_gen(new TimedParticleGenerator(exhgen, exhaust, 0.1));
+
 
 		blast_system = new ParticleSystem();
-		projectile_config proj2{
+		particle_config proj2{
 			custom::Vector3::blank(),
 			custom::Vector3::blank(),
 			1.0,
-			1.0,
+			0.1,
 			3,
-			{0,0,1,1},
-			100.0,
-			0.0
+			0.0,
+			{0,0,1,1}
 		};
-		gen_config gen2(proj2, custom::Vector3::convert(pose.p), custom::Vector3::blank(), 200,
+		gen_config gen2(custom::Vector3::convert(pose.p), 200,
 			distribution::UNIFORM);
-		blast_system->add_gen(new ParticleGenerator(gen2));
+		blast_system->add_gen(new ParticleGenerator(gen2,proj2));
 
-		firing_system->add_force(new WindGen(custom::Vector3::convert(pose.p), custom::Vector3(10, 0, 0)));
+		bullet_drag = new WindGen(custom::Vector3::convert(pose.p), custom::Vector3(10, 0, 0));
+		firing_system->add_force(bullet_drag);
 		drag = new WindGen(custom::Vector3::convert(pose.p), custom::Vector3::blank(), 0.02);
 		max_speed = 3.0;
 	}
@@ -91,10 +104,13 @@ public:
 		Particle::translate(t);
 	}
 
+	inline void toggle_drag() { drag->set_active(!drag->get_active()); }
+	inline void toggle_bullet_drag() { bullet_drag->set_active(!bullet_drag->get_active()); }
 protected:
 	double move_intensity = 50.0;
 	ParticleSystem* firing_system;
 	ParticleSystem* blast_system;
+	WindGen* bullet_drag;
 	WindGen* drag;
 	double stop_threshold = 0.03;
 };

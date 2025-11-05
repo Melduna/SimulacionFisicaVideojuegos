@@ -1,13 +1,13 @@
 #include "ForceGenerator.h"
 #include <cmath>
 #define CONST_E 2.71828
-void GravityGen::apply_force(Projectile* p)
+void GravityGen::apply_force(Particle* p)
 {
 	double mass_inverse = p->get_mass_inverse();
 	p->add_force(gravity * mass_inverse);
 }
 
-void WindGen::apply_force(Projectile* p)
+void WindGen::apply_force(Particle* p)
 {
 	auto vel = p->get_direction();
 	auto distance = (p->get_position() - custom::Vector3::convert(pose.p)).mod();
@@ -19,7 +19,7 @@ void WindGen::apply_force(Projectile* p)
 	}
 }
 
-void ExplosionGen::apply_force(Projectile* p)
+void ExplosionGen::apply_force(Particle* p)
 {
 	double time_elapsed = max_time - lifetime;
 	double current_radius = (start_radius + end_radius) / max_time * (time_elapsed);
@@ -31,6 +31,6 @@ void ExplosionGen::apply_force(Projectile* p)
 	
 }
 
-void VortexGen::apply_force(Projectile*)
+void VortexGen::apply_force(Particle*)
 {
 }

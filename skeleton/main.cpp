@@ -65,17 +65,13 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 	
-	projectile_config ship_conf{
-			{
-				custom::Vector3(-200,0,-100),
-				custom::Vector3::blank(),
-				1.0,
-				10,
-				20,
-				{1,1,1,1}
-			},
-			300, //Speed,
-			0.0
+	particle_config ship_conf{
+			custom::Vector3(-200,0,-100),
+			custom::Vector3::blank(),
+			1.0,
+			10,
+			20,
+			{1,1,1,1}
 	};
 	ship = new Ship(ship_conf);
 

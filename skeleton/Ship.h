@@ -17,9 +17,9 @@ custom::Vector3 dirs[] = {
 	custom::Vector3(0,0,-1.0),
 	custom::Vector3::blank()
 };
-class Ship : public Projectile {
+class Ship : public Particle {
 public:
-	Ship(projectile_config p_c):Projectile(p_c) {
+	Ship(particle_config p_c):Particle(p_c) {
 		timed = false;
 
 		firing_system = new ParticleSystem();
@@ -72,7 +72,7 @@ public:
 		}
 		drag->redirect(vel * -1);
 		drag->apply_force(this);
-		Projectile::step(dt); 
+		Particle::step(dt); 
 	}
 	inline void set_accel(Direction d) {
 		add_force(dirs[d] * move_intensity);
@@ -88,7 +88,7 @@ public:
 		firing_system->translate(t);
 		blast_system->translate(t);
 		drag->translate(t);
-		Projectile::translate(t);
+		Particle::translate(t);
 	}
 
 protected:

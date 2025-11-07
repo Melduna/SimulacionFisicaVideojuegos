@@ -32,9 +32,11 @@ protected:
 };
 class VortexGen :public ForceGenerator {
 public:
-	inline VortexGen(custom::Vector3 p) { pose.p = p.converted(); }
+	inline VortexGen(custom::Vector3 p, double r = 50.0, double i = 1.0) :radius(r), intensity(i) { pose.p = p.converted(); }
 	void apply_force(Particle*) override;
 protected:
+	double radius;
+	double intensity;
 };
 class ExplosionGen :public ForceGenerator {
 public:

@@ -34,6 +34,13 @@ void ExplosionGen::apply_force(Particle* p)
 	}
 }
 
-void VortexGen::apply_force(Particle*)
+void VortexGen::apply_force(Particle* p)
 {
+	if (active) {
+		auto vec = (p->get_position() - custom::Vector3::convert(pose.p));
+		if (vec.mod() <= radius) {
+			custom::Vector3 force(vec.getX()*-1, 50-vec.getY(), vec.getZ());
+			p->add_force(force*intensity);
+		}
+	}
 }

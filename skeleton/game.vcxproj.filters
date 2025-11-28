@@ -14,6 +14,8 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="ForceGenerator.cpp" />
+    <ClCompile Include="SpringGen.cpp" />
+    <ClCompile Include="Buoyancy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -30,6 +32,8 @@
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="ForceGenerator.h" />
     <ClInclude Include="Ship.h" />
+    <ClInclude Include="SpringGen.h" />
+    <ClInclude Include="Buoyancy.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

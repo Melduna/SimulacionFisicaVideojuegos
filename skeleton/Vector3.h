@@ -11,9 +11,9 @@ namespace custom {
 	public:
 		Vector3() :x(0.0), y(0.0), z(0.0) {}
 		Vector3(float x_, float y_, float z_) :x(x_), y(y_), z(z_) {}
-		inline float getX() const { return x; }
-		inline float getY() const { return y; }
-		inline float getZ() const { return z; }
+		inline float& getX() { return x; }
+		inline float& getY() { return y; }
+		inline float& getZ() { return z; }
 		Vector3 operator+(const Vector3& other) {
 			return Vector3(x + other.x, y + other.y, z + other.z);
 		}

@@ -274,6 +274,7 @@
     <ClInclude Include="ForceGenerator.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="PhysicsObject.h" />
     <ClInclude Include="RenderUtils.hpp" />
     <ClInclude Include="Render\Camera.h" />
     <ClInclude Include="Render\Render.h" />

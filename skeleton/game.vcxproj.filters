@@ -34,6 +34,7 @@
     <ClInclude Include="Ship.h" />
     <ClInclude Include="SpringGen.h" />
     <ClInclude Include="Buoyancy.h" />
+    <ClInclude Include="PhysicsObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

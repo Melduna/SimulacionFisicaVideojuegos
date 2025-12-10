@@ -26,21 +26,21 @@ public:
 		projectile_config proj1{
 		{
 			custom::Vector3::blank(),
-			custom::Vector3(-10,0,0),
+			custom::Vector3(-1000,0,0),
 			1.0,
 			1.0,
 			10.0,
 			GRAVITY,
 			{1,0,0,1}
 		},
-		300 //Speed
+		10000 //Speed
 		};
 		gen_config gen1(custom::Vector3::convert(pose.p), 1,
 			distribution::NORMAL);
 		firing_system->add_gen(new ProjectileGenerator(gen1,proj1)); //Primary fire
 		particle_config exhaust{
 			custom::Vector3::blank(),
-			custom::Vector3(3.0,0.0,0.0),
+			custom::Vector3(300.0,0.0,0.0),
 			0.3,
 			0.1,
 			3.0,
@@ -107,7 +107,7 @@ public:
 	inline void toggle_drag() { drag->set_active(!drag->get_active()); }
 	inline void toggle_bullet_drag() { bullet_drag->set_active(!bullet_drag->get_active()); }
 protected:
-	double move_intensity = 50.0;
+	double move_intensity = 5000.0;
 	ParticleSystem* firing_system;
 	ParticleSystem* blast_system;
 	WindGen* bullet_drag;

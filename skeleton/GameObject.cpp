@@ -50,7 +50,9 @@ void Particle::integrate(double t)
 		vel *= max_speed*0.9;
 		accel = custom::Vector3::blank();
 	}
-	translate(vel*t);
+	translate(vel
+		*t
+	);
 	force_accum = custom::Vector3::blank();
 }
 

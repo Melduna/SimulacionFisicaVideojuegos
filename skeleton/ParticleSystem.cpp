@@ -45,8 +45,6 @@ void ParticleGenerator::generate(){
 			vec_aux = custom::Vector3(Distributions::next_normal(), Distributions::next_normal(), Distributions::next_normal());
 		else if (dist == UNIFORM)
 			vec_aux = custom::Vector3(Distributions::next_uniform(), Distributions::next_uniform(), Distributions::next_uniform());
-		else if (dist == AMPLE_NORMAL)
-			vec_aux = custom::Vector3(Distributions::next_ample_normal(), Distributions::next_ample_normal(), Distributions::next_ample_normal());
 		conf_aux.position += vec_aux - custom::Vector3(0.5, 0.5, 0.5);
 		aux = new Particle(conf_aux);
 
@@ -156,8 +154,6 @@ void ProjectileGenerator::generate()
 			vec_aux = custom::Vector3(Distributions::next_normal(), Distributions::next_normal(), Distributions::next_normal());
 		else if (dist == UNIFORM)
 			vec_aux = custom::Vector3(Distributions::next_uniform(), Distributions::next_uniform(), Distributions::next_uniform());
-		else if (dist == AMPLE_NORMAL)
-			vec_aux = custom::Vector3(Distributions::next_ample_normal(), Distributions::next_ample_normal(), Distributions::next_ample_normal());
 		conf_aux.p_config.position += vec_aux - custom::Vector3(0.5, 0.5, 0.5);
 		aux = new Projectile(conf_aux);
 		particles.push_back(aux);

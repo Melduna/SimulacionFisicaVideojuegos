@@ -6,7 +6,6 @@ enum distribution {
 	UNIFORM,
 	NORMAL,
 	CONSTANT,
-	AMPLE_NORMAL
 };
 
 struct gen_config {

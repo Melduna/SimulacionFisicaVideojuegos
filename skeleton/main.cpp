@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "ParticleSystem.h"
 #include "Ship.h"
+#include "PhysicsObject.h"
 
 #include <iostream>
 
@@ -38,10 +39,10 @@ Ship* ship = nullptr;
 ParticleGenerator* camera_shot = nullptr;
 
 void create_ship() {
-	camera_shot->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 10);
+	camera_shot->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 1000);
 	camera_shot->generate();
 	particle_config ship_conf{
-		custom::Vector3(-200,0,-100),
+		custom::Vector3(-500,0,0),
 		custom::Vector3::blank(),
 		1.0,
 		10,
@@ -88,7 +89,7 @@ void initPhysics(bool interactive)
 			2.0, //Lifetime
 			1, //Mass
 		},
-		300 //Speed
+		10000 //Speed
 	};
 	gen_config temp2(custom::Vector3::convert(GetCamera()->getEye()), 1,
 		distribution::NORMAL);
@@ -193,6 +194,9 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		break;
 	case 'E':
 		if (ship) ship->toggle_bullet_drag();
+		break;
+	case 'P':
+		//new physics::SphereParticle(gScene,physics::phys_particle_config{});
 		break;
 	default:
 		break;

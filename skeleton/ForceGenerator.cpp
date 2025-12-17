@@ -1,5 +1,6 @@
 #include "ForceGenerator.h"
 #include <cmath>
+#include "PhysicsForceGenerator.h"
 #define CONST_E 2.71828
 void GravityGen::apply_force(Particle* p)
 {
@@ -17,7 +18,10 @@ void WindGen::apply_force(Particle* p)
 			custom::Vector3 force = ((direction - vel) * resistance + ((direction - vel) * ((direction - vel).mod()) * turbulence));
 			//force.print();
 			p->add_force(force);
+			//std::cout << "Vel: " << vel.getX() << ", " << vel.getY() << ", " << vel.getZ() << "\n" <<
+			//	"	Force: " << force.getX()<<", "<<force.getY()<<", "<<force.getZ()<<"\n";
 		}
+
 	}
 }
 

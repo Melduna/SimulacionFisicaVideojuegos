@@ -5,25 +5,23 @@ public:
 	Distributions() {
 		unif = std::uniform_real_distribution<double>(0.0, 1.0);
 		norm = std::normal_distribution<double>(0.0, 1.0);
-		ample_norm = std::normal_distribution<double>(0.0, 50.0);
 		std::random_device rd;
 		seed = std::mt19937(rd());
 	};
-	static double next_uniform()
+	static double next_uniform(double range = 1.0)
 	{
-		return unif(seed);
+		double output = unif(seed)*range;
+		//std::cout << "uniform: " << output << "\n";
+		return output;
 	};
-	static double next_normal()
+	static double next_normal(double range = 1.0)
 	{
-		return norm(seed);
-	};
-	static double next_ample_normal()
-	{
-		return ample_norm(seed);
+		double output = norm(seed)*range;
+		//std::cout << "normal: " << output << "\n";
+		return output;
 	};
 protected:
 	inline static std::uniform_real_distribution<double> unif;
 	inline static std::normal_distribution<double> norm;
-	inline static std::normal_distribution<double> ample_norm;
 	inline static std::mt19937 seed;
 };

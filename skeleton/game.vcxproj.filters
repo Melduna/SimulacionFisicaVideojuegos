@@ -16,6 +16,10 @@
     <ClCompile Include="ForceGenerator.cpp" />
     <ClCompile Include="SpringGen.cpp" />
     <ClCompile Include="Buoyancy.cpp" />
+    <ClCompile Include="PhysicsParticleSystem.cpp" />
+    <ClCompile Include="PhysicsObject.cpp" />
+    <ClCompile Include="PhysicsShip.cpp" />
+    <ClCompile Include="PhysicsForceGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -35,6 +39,9 @@
     <ClInclude Include="SpringGen.h" />
     <ClInclude Include="Buoyancy.h" />
     <ClInclude Include="PhysicsObject.h" />
+    <ClInclude Include="PhysicsParticleSystem.h" />
+    <ClInclude Include="PhysicsShip.h" />
+    <ClInclude Include="PhysicsForceGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

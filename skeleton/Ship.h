@@ -47,7 +47,7 @@ public:
 			0.0,
 			{0.5,0.5,0.5,0.5}
 		};
-		gen_config exhgen( custom::Vector3::convert(pose.p),1,AMPLE_NORMAL,200.0);
+		gen_config exhgen( custom::Vector3::convert(pose.p),1,UNIFORM,200.0);
 		firing_system->add_gen(new TimedParticleGenerator(exhgen, exhaust, 0.1));
 
 
@@ -68,7 +68,7 @@ public:
 		bullet_drag = new WindGen(custom::Vector3::convert(pose.p), custom::Vector3(10, 0, 0));
 		firing_system->add_force(bullet_drag);
 		drag = new WindGen(custom::Vector3::convert(pose.p), custom::Vector3::blank(), 0.02);
-		max_speed = 3.0;
+		max_speed = 200.0;
 	}
 	~Ship() {
 		delete firing_system;
@@ -83,12 +83,14 @@ public:
 			vel = custom::Vector3::blank();
 			accel = custom::Vector3::blank();
 		}
-		drag->redirect(vel * -1);
+		//drag->redirect(vel * -1);
 		drag->apply_force(this);
 		Particle::step(dt); 
 	}
 	inline void set_accel(Direction d) {
-		add_force(dirs[d] * move_intensity);
+		custom::Vector3 force = dirs[d] * move_intensity;
+		//std::cout << force.getX() << " " << force.getY() << " " << force.getZ() << "\n";
+		add_force(force);
 	}
 	inline void fire() {
 		firing_system->fire_at(0);
@@ -107,10 +109,10 @@ public:
 	inline void toggle_drag() { drag->set_active(!drag->get_active()); }
 	inline void toggle_bullet_drag() { bullet_drag->set_active(!bullet_drag->get_active()); }
 protected:
-	double move_intensity = 5000.0;
+	double move_intensity = 10000.0;
 	ParticleSystem* firing_system;
 	ParticleSystem* blast_system;
 	WindGen* bullet_drag;
 	WindGen* drag;
-	double stop_threshold = 0.03;
+	double stop_threshold = 0.5;
 };

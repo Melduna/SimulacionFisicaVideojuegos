@@ -260,6 +260,10 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="PhysicsForceGenerator.cpp" />
+    <ClCompile Include="PhysicsObject.cpp" />
+    <ClCompile Include="PhysicsParticleSystem.cpp" />
+    <ClCompile Include="PhysicsShip.cpp" />
     <ClCompile Include="RenderUtils.cpp" />
     <ClCompile Include="Render\Camera.cpp" />
     <ClCompile Include="Render\Render.cpp" />
@@ -274,7 +278,10 @@
     <ClInclude Include="ForceGenerator.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="PhysicsForceGenerator.h" />
     <ClInclude Include="PhysicsObject.h" />
+    <ClInclude Include="PhysicsParticleSystem.h" />
+    <ClInclude Include="PhysicsShip.h" />
     <ClInclude Include="RenderUtils.hpp" />
     <ClInclude Include="Render\Camera.h" />
     <ClInclude Include="Render\Render.h" />

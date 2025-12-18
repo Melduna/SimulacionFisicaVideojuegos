@@ -57,12 +57,11 @@ namespace physics {
 	};
 	class EnemyShip : public PhysicsShip {
 	public:
-		EnemyShip(physx::PxScene* s, phys_particle_config config = phys_particle_config(), int i = 0);
+		EnemyShip(physx::PxScene* s, phys_particle_config config = phys_particle_config());
 		~EnemyShip();
 		void step(double dt) override;
 		bool die();
 	protected:
 		PhysicsParticleSystem* blast;
-		int index;
 	};
 }

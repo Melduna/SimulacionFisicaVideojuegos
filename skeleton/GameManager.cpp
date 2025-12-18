@@ -91,7 +91,7 @@ void GameManager::startLevel()
 	for (custom::Vector3 pos : positions) {
 		physics::phys_particle_config aux = enemy_config;
 		aux.position = pos;
-		e_ships.push_back(new physics::EnemyShip(scene, aux,i));
+		e_ships.push_back(new physics::EnemyShip(scene, aux));
 		i++;
 	}
 	currentTimeLimit = max(baseTimeLimit - (0.5 * round), 2.0);

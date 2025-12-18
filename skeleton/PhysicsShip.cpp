@@ -117,7 +117,7 @@ void physics::PlayerShip::reset_stage_2()
 	crosshair = new Crosshair(scene, crosshair_config);
 }
 
-physics::EnemyShip::EnemyShip(physx::PxScene* s, phys_particle_config config, int i):PhysicsShip(s,config),index(i)
+physics::EnemyShip::EnemyShip(physx::PxScene* s, phys_particle_config config):PhysicsShip(s,config)
 {
 	blast = new PhysicsParticleSystem(scene);
 	phys_particle_config shrapnel(custom::Vector3::blank(),custom::Vector3::blank(),1.0,5.0,{1,0,0,1});
@@ -127,9 +127,7 @@ physics::EnemyShip::EnemyShip(physx::PxScene* s, phys_particle_config config, in
 		physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z |
 		physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y);
 
-	char name[6];
-	sprintf(name,"ship_%d", i);
-	dynActor->setName(name);
+
 }
 
 physics::EnemyShip::~EnemyShip()

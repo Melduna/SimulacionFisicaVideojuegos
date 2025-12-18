@@ -43,7 +43,7 @@ namespace physics {
 	};
 	class PhysicsObject {
 	public:
-		PhysicsObject(physx::PxScene* s);
+		PhysicsObject(physx::PxScene* s, double sf= 1.0, double df = 1.0, double r = 1.0);
 		~PhysicsObject();
 		virtual void step(double dt);
 		virtual void translate(custom::Vector3 v);
@@ -51,6 +51,7 @@ namespace physics {
 		void addChild(PhysicsObject* child);
 		void setOpacity(double a);
 		inline bool isAlive() const { return alive; }
+		inline physx::PxActor* getActor() { return actor; }
 		custom::Vector3 getPosition();
 		void setPosition(custom::Vector3 v);
 	protected:
@@ -71,13 +72,13 @@ namespace physics {
 	};
 	class StaticPhysicsObject : public PhysicsObject {
 	public:
-		StaticPhysicsObject(physx::PxScene* s, phys_particle_config config = phys_particle_config());
+		StaticPhysicsObject(physx::PxScene* s, phys_particle_config config = phys_particle_config(), double sf = 1.0, double df = 1.0, double r = 1.0);
 	protected:
 		physx::PxRigidStatic* stcActor = nullptr;
 	};
 	class DynamicPhysicsObject : public PhysicsObject {
 	public:
-		DynamicPhysicsObject(physx::PxScene* s, phys_particle_config config = phys_particle_config());
+		DynamicPhysicsObject(physx::PxScene* s, phys_particle_config config = phys_particle_config(), double sf = 1.0, double df = 1.0, double r = 1.0);
 		custom::Vector3 getDirection();
 		void addForce(custom::Vector3 f);
 		void step(double dt) override;
@@ -91,7 +92,13 @@ namespace physics {
 	};
 	class SphereParticle : public DynamicPhysicsObject {
 	public:
-		SphereParticle(physx::PxScene* s, phys_particle_config config = phys_particle_config());
+		SphereParticle(physx::PxScene* s, phys_particle_config config = phys_particle_config(), double sf = 1.0, double df = 1.0, double r = 1.0);
+	protected:
+
+	};		
+	class GhostSphereParticle : public DynamicPhysicsObject {
+	public:
+		GhostSphereParticle(physx::PxScene* s, phys_particle_config config = phys_particle_config());
 	protected:
 	};
 	class Crosshair : public DynamicPhysicsObject {

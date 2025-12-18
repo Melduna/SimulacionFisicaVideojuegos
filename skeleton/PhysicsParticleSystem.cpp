@@ -6,6 +6,7 @@ physics::PhysicsParticleGenerator::PhysicsParticleGenerator(physx::PxScene* s, p
 	dist = g.dist;
 	interest_range = g.interest_range;
 	dynActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
+	ghost = g.ghost;
 }
 
 physics::PhysicsParticleGenerator::~PhysicsParticleGenerator()
@@ -34,7 +35,7 @@ void physics::PhysicsParticleGenerator::step(double t)
 void physics::PhysicsParticleGenerator::generate()
 {
 	for (int i = 0; i < gen_count;i++) {
-		SphereParticle* aux;
+		DynamicPhysicsObject* aux;
 		phys_particle_config conf_aux = pa_config;
 		conf_aux.position += getPosition();
 		custom::Vector3 vec_aux = custom::Vector3::blank();
@@ -43,7 +44,8 @@ void physics::PhysicsParticleGenerator::generate()
 		else if (dist == UNIFORM)
 			vec_aux = custom::Vector3(Distributions::next_uniform(), Distributions::next_uniform(), Distributions::next_uniform());
 		conf_aux.position += vec_aux - custom::Vector3(0.5, 0.5, 0.5);
-		aux = new physics::SphereParticle(scene,conf_aux);
+		if (!ghost) aux = new physics::SphereParticle(scene,conf_aux);
+		else aux = new physics::GhostSphereParticle(scene, conf_aux);
 
 		particles.push_back(aux);
 	}

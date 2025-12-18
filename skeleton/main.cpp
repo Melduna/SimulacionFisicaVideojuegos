@@ -15,7 +15,13 @@
 
 #include <iostream>
 
-std::string display_text = "";
+//std::string display_text = "Si dudas, pulsa 'Z'.";
+std::vector<std::string> display_texts{
+	"STARWARE",
+	"",
+	"",
+	""
+};
 
 
 using namespace physx;
@@ -84,7 +90,7 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 
-	gameManager = new GameManager(gScene);
+	gameManager = new GameManager(gScene,display_texts);
 
 	projectile_config temp{
 		{
@@ -210,12 +216,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 {
-	const char* name1 = actor1->getName();
-	const char* name2 = actor2->getName();
-	if (name1 && name1[0] == 's') 
-		gameManager->killShipAt(name1[5]-'0');
-	if (name2 && name2[0] == 's') 
-		gameManager->killShipAt(name2[5]-'0');
+	gameManager->killEnemy(actor1);
+	gameManager->killEnemy(actor2);
 }
 
 

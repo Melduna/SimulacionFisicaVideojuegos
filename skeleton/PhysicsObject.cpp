@@ -1,7 +1,7 @@
 #include "PhysicsObject.h"
-physics::PhysicsObject::PhysicsObject(physx::PxScene* s) :scene(s) {
+physics::PhysicsObject::PhysicsObject(physx::PxScene* s,double sf, double df, double r) :scene(s) {
 	auto gphysics = &PxGetPhysics();
-	mat = gphysics->createMaterial(1.0f, 1.0f, 1.0f);
+	mat = gphysics->createMaterial(sf, df, r);
 }
 
 physics::PhysicsObject::~PhysicsObject() 
@@ -63,8 +63,8 @@ void physics::PhysicsObject::setPosition(custom::Vector3 v)
 	actor->setGlobalPose(physx::PxTransform(v.converted()));
 }
 
-physics::DynamicPhysicsObject::DynamicPhysicsObject(physx::PxScene* s, phys_particle_config config) :
-	PhysicsObject(s) 
+physics::DynamicPhysicsObject::DynamicPhysicsObject(physx::PxScene* s, phys_particle_config config, double sf, double df, double r) :
+	PhysicsObject(s,sf,df,r) 
 {
 
 	init_pos = config.position;
@@ -114,8 +114,8 @@ void physics::DynamicPhysicsObject::resetMovement()
 	dynActor->setLinearVelocity(Vector3(0, 0, 0));
 }
 
-physics::StaticPhysicsObject::StaticPhysicsObject(physx::PxScene* s, phys_particle_config config) :
-	PhysicsObject(s) 
+physics::StaticPhysicsObject::StaticPhysicsObject(physx::PxScene* s, phys_particle_config config,double sf, double df, double r) :
+	PhysicsObject(s,sf,df,r) 
 {
 	last_pos = config.position;
 	auto gphysics = &PxGetPhysics();
@@ -125,8 +125,8 @@ physics::StaticPhysicsObject::StaticPhysicsObject(physx::PxScene* s, phys_partic
 	scene->addActor(*stcActor);
 }
 
-physics::SphereParticle::SphereParticle(physx::PxScene* s, phys_particle_config config) :
-	DynamicPhysicsObject(s, config) 
+physics::SphereParticle::SphereParticle(physx::PxScene* s, phys_particle_config config, double sf, double df, double r) :
+	DynamicPhysicsObject(s, config,sf,df,r) 
 {
 	auto gphysics = &PxGetPhysics();
 	auto sphere = gphysics->createShape(physx::PxSphereGeometry(config.size), *mat);
@@ -149,13 +149,25 @@ physics::Crosshair::Crosshair(physx::PxScene* s, phys_particle_config config):Dy
 	dynActor->setRigidDynamicLockFlags(
 		physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X |
 		physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y |
-		physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z);
+		physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z|
+		physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y|
+		physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z);
 }
 
-physics::Wall::Wall(physx::PxScene* s, phys_particle_config config,bool vert):StaticPhysicsObject(s,config)
+physics::Wall::Wall(physx::PxScene* s, phys_particle_config config,bool vert):StaticPhysicsObject(s,config,50000.0,50000.0,1.0)
 {
 	auto gphysics = &PxGetPhysics();
 	auto box = gphysics->createShape(physx::PxBoxGeometry(Vector3(500, vert ? config.size : 10, vert ? 10 : config.size)), *mat);
 	stcActor->attachShape(*box);
 	//_renderItem = new RenderItem(box, stcActor, config.color);
+}
+
+physics::GhostSphereParticle::GhostSphereParticle(physx::PxScene* s, phys_particle_config config):DynamicPhysicsObject(s,config)
+{
+	auto gphysics = &PxGetPhysics();
+	auto sphere = gphysics->createShape(physx::PxSphereGeometry(config.size), *mat);
+	_renderItem = new RenderItem(sphere, dynActor, config.color);
+	dynActor->setMass(config.mass);
+	physx::PxRigidBodyExt::updateMassAndInertia(*dynActor, config.mass / (4 * pow(config.size, 3) * PI / 3));
+	dynActor->setLinearVelocity(config.velocity.converted());
 }

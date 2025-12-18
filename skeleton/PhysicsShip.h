@@ -20,7 +20,7 @@ namespace physics {
 	};
 	class PhysicsShip : public SphereParticle {
 	public:
-		PhysicsShip(physx::PxScene* s, phys_particle_config config = phys_particle_config());
+		PhysicsShip(physx::PxScene* s, phys_particle_config config = phys_particle_config(), double sf = 1.0, double df = 1.0, double r = 1.0);
 	protected:
 		GameManager* gameManager = nullptr;
 	};

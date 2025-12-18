@@ -1,6 +1,6 @@
 #include "GameManager.h"
 
-GameManager::GameManager(physx::PxScene* s) 
+GameManager::GameManager(physx::PxScene* s, std::vector<std::string>& t):texts(t)
 {
 	std::random_device dev;
 	seed = std::mt19937(dev());
@@ -36,7 +36,8 @@ void GameManager::resetGame()
 {
 	setState(MENU);
 	p_ship->setOpacity(0);
-
+	texts[1] = "Pulsa Z para comenzar";
+	texts[2] = "";
 	round = 0;
 	lives = maxLives;
 	currentLevel = -1;
@@ -68,13 +69,17 @@ void GameManager::readLevel(int level)
 
 void GameManager::startRound()
 {
+	texts[2] = "Ronda: " + std::to_string(round) + " Vidas: " + std::to_string(lives);
 	p_ship->setOpacity(0);
+	p_ship->reset();
 	remainingTimeout = levelTimeout;
 	setState(INTRO);
 }
 
 void GameManager::startLevel()
 {
+	texts[1] = "";
+	texts[3] = "";
 	p_ship->reset();
 	int newlevel = -1;
 	while (newlevel == -1 || newlevel == currentLevel) newlevel = gen(seed);
@@ -94,6 +99,7 @@ void GameManager::startLevel()
 
 void GameManager::endLevel(bool win)
 {
+	texts[1] = win ? "VICTORIA" : "DERROTA";
 	deleteTargets();
 	p_ship->reset();
 	p_ship->setOpacity(0.0);
@@ -104,12 +110,15 @@ void GameManager::endLevel(bool win)
 	else {
 		lives--;
 	}
-	if (lives <= 0) gameOver();
+	if (lives < 0) gameOver();
 	else startRound();
 }
 
 void GameManager::gameOver()
 {
+	texts[1] = "GAME OVER";
+	texts[2] = "Ronda final: "+ std::to_string(round);
+	texts[3] = "Pulsa Z para reiniciar.";
 	setState(GAMEOVER);
 }
 
@@ -125,6 +134,7 @@ void GameManager::keyPressed(char c)
 	case MENU:
 		switch (c) {
 		case 'Z':
+			texts[1] = "PREPARADOS...";
 			startRound();
 			break;
 		default: break;
@@ -163,37 +173,41 @@ void GameManager::keyPressed(char c)
 	}
 }
 
-void GameManager::killShipAt(int i)
+void GameManager::killEnemy(physx::PxActor* a)
 {
-	int j = 0;
-	for (auto s : e_ships) {
-		if (i == j && s->die()) enemyDown();
-		j++;
+	for (auto e : e_ships) {
+		if (a == e->getActor()) {
+			if (e->die()) enemyDown();
+		}
 	}
 }
+
+
 
 void GameManager::enemyDown()
 {
 	enemyCount--;
-	if (enemyCount <= 0) endLevel(true);
+	if (enemyCount <= 0) setState(QUEUE_END);
 }
 
 void GameManager::step(double dt)
 {
 	//std::cout << gameState << "\n";
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	int temp = int(currentTimeLimit);
+
 	switch (gameState) {
 	case MENU:
-		drawText("RONDA", glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2 - 50);
 		break;
 	case INTRO:
-		drawText("RONDA" + std::to_string(round), glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2 - 50);
-		drawText("VIDAS:" + std::to_string(lives), glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2);
-		drawText("Empieza en:" + std::to_string(int(remainingTimeout)), glutGet(GLUT_WINDOW_WIDTH) / 2, glutGet(GLUT_WINDOW_HEIGHT) / 2 + 50);
+
+		texts[3] = "Comienza en: " + std::to_string(int(remainingTimeout)+1);
+		p_ship->step(dt);
 		remainingTimeout -= dt;
 		if (remainingTimeout <= 0.0) startLevel();
 		break;
 	case GAME:
+		texts[1] = std::to_string(int(currentTimeLimit)) + "." + std::to_string(int((currentTimeLimit - temp) * 100));
 		currentTimeLimit -= dt;
 		if (currentTimeLimit <= 0.0) endLevel(false);
 		p_ship->step(dt);
@@ -201,6 +215,10 @@ void GameManager::step(double dt)
 		break;
 	case GAMEOVER:
 		break;
+	case QUEUE_END:
+		//p_ship->step(dt);
+
+		endLevel(true);
 	}
 
 }

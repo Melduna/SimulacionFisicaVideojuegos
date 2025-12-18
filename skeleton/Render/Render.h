@@ -33,6 +33,7 @@
 
 #include "PxPhysicsAPI.h"
 #include "foundation/PxPreprocessor.h"
+#include <vector>
 
 #if PX_WINDOWS
 #include <windows.h>
@@ -48,6 +49,8 @@
 #include <string>
 
 extern std::string display_text;
+
+extern std::vector<std::string> display_texts;
 
 namespace Snippets
 {

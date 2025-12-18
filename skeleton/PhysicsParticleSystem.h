@@ -14,14 +14,17 @@ namespace physics {
 		int gen_count;
 		distribution dist;
 		double interest_range;
+		bool ghost;
 		phys_gen_config(custom::Vector3 o = custom::Vector3::blank(),
 			int g_c = 1,
 			distribution dt = NORMAL,
-			double i_r = 1000.0) {
+			double i_r = 1000.0,
+			bool g = false) {
 			origin = o;
 			gen_count = g_c;
 			dist = dt;
 			interest_range = i_r;
+			ghost = g;
 		};
 	};
 	class PhysicsForceGenerator;
@@ -40,6 +43,7 @@ namespace physics {
 		int gen_count;
 		distribution dist;
 		double interest_range;
+		bool ghost;
 	};
 
 	class TimedPhysicsParticleGenerator : public PhysicsParticleGenerator {

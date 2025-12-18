@@ -8,7 +8,8 @@ enum State {
 	MENU,
 	INTRO,
 	GAME,
-	GAMEOVER
+	GAMEOVER,
+	QUEUE_END
 };
 static std::vector<std::pair<custom::Vector3,bool>> wallPos = {
 	{custom::Vector3(-400,300,0),false},
@@ -18,7 +19,7 @@ static std::vector<std::pair<custom::Vector3,bool>> wallPos = {
 };
 class GameManager {
 public:
-	GameManager(physx::PxScene* s);
+	GameManager(physx::PxScene* s, std::vector<std::string>& t);
 	~GameManager();
 	void deleteTargets();
 	void resetGame();
@@ -29,7 +30,7 @@ public:
 	void gameOver();
 	void setState(State s);
 	void keyPressed(char c);
-	void killShipAt(int i);
+	void killEnemy(physx::PxActor* a);
 	void enemyDown();
 	
 	void step(double dt);
@@ -40,12 +41,21 @@ private:
 	std::list<physics::EnemyShip*> e_ships;
 	std::vector<physics::Wall*> walls;
 
+#pragma region ui
+	//std::list<physics::DynamicPhysicsObject*> introDisplay;
+	//std::list<physics::DynamicPhysicsObject*> pointsDisplay;
+	//std::list<physics::DynamicPhysicsObject*> lifeDisplay;
+	//std::list<physics::DynamicPhysicsObject*> timerDisplay;
+	std::vector<std::string>& texts;
+#pragma endregion
+
+
 	double zOffset = -700.0;
 	double xyOffset = 200.0;
 
 	const double baseTimeLimit = 6.0;
 	const double levelTimeout = 3.0;
-	const int maxLives = 4;
+	const int maxLives = 3;
 
 	int round = 0;
 	double remainingTimeout;

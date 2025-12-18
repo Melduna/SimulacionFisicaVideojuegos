@@ -1,14 +1,14 @@
 #include "PhysicsShip.h"
 
-physics::PhysicsShip::PhysicsShip(physx::PxScene* s, phys_particle_config config):
-	SphereParticle(s, config)
+physics::PhysicsShip::PhysicsShip(physx::PxScene* s, phys_particle_config config, double sf, double df, double r):
+	SphereParticle(s, config,sf,df,r)
 {
 	dynActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
 
 }
 
 physics::PlayerShip::PlayerShip(physx::PxScene* s, phys_particle_config config):
-	PhysicsShip(s,config)
+	PhysicsShip(s,config,5000.0,5000.0,0.0001)
 {
 	dynActor->setRigidDynamicLockFlags(
 		physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X |
@@ -90,7 +90,7 @@ void physics::PlayerShip::reset()
 	//crosshair->resetMovement();
 	//crosshair->setPosition(init_pos+ custom::Vector3(-200, 0, 0));
 	//drag->reset();
-	//spring->reset();
+	spring->reset();
 	//firing_system->reset();
 	crosshair->reset();
 }
@@ -98,8 +98,8 @@ void physics::PlayerShip::reset()
 physics::EnemyShip::EnemyShip(physx::PxScene* s, phys_particle_config config, int i):PhysicsShip(s,config),index(i)
 {
 	blast = new PhysicsParticleSystem(scene);
-	phys_particle_config shrapnel(config.position,custom::Vector3::blank(),1.0,5.0,{1,0,0,1});
-	phys_gen_config blastgen(config.position, 200, UNIFORM, 100);
+	phys_particle_config shrapnel(custom::Vector3::blank(),custom::Vector3::blank(),1.0,5.0,{1,0,0,1});
+	phys_gen_config blastgen(config.position, 100, UNIFORM, 100,true);
 	blast->add_gen(new PhysicsParticleGenerator(s, blastgen, shrapnel));
 	dynActor->setRigidDynamicLockFlags(
 		physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z |
@@ -126,7 +126,7 @@ bool physics::EnemyShip::die()
 	if (alive) {
 		setOpacity(0);
 		blast->fire_at(0);
-		blast->add_force(new PhysicsExplosionGen(scene, custom::Vector3::convert(dynActor->getGlobalPose().p), 50.0));
+		blast->add_force(new PhysicsExplosionGen(scene, custom::Vector3::convert(dynActor->getGlobalPose().p), 500.0));
 		alive = false;
 		return true;
 	}

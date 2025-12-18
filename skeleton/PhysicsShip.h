@@ -42,6 +42,8 @@ namespace physics {
 		//}
 		inline void toggle_drag() { drag->set_active(!drag->get_active()); }
 		void reset() override;
+		void reset_stage_1();
+		void reset_stage_2();
 		//inline void toggle_bullet_drag() { bullet_drag->set_active(!bullet_drag->get_active()); }
 	protected:
 		double move_intensity = 500.0;

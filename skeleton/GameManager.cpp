@@ -71,7 +71,7 @@ void GameManager::startRound()
 {
 	texts[2] = "Ronda: " + std::to_string(round) + " Vidas: " + std::to_string(lives);
 	p_ship->setOpacity(0);
-	p_ship->reset();
+	p_ship->reset_stage_1();
 	remainingTimeout = levelTimeout;
 	setState(INTRO);
 }
@@ -80,7 +80,7 @@ void GameManager::startLevel()
 {
 	texts[1] = "";
 	texts[3] = "";
-	p_ship->reset();
+	p_ship->reset_stage_2();
 	int newlevel = -1;
 	while (newlevel == -1 || newlevel == currentLevel) newlevel = gen(seed);
 	currentLevel = newlevel;
@@ -101,7 +101,7 @@ void GameManager::endLevel(bool win)
 {
 	texts[1] = win ? "VICTORIA" : "DERROTA";
 	deleteTargets();
-	p_ship->reset();
+	p_ship->reset_stage_1();
 	p_ship->setOpacity(0.0);
 	if (win)
 	{

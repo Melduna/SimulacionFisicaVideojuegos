@@ -51,7 +51,7 @@ void physics::PlayerShip::step(double dt)
 	//blast_system->step(dt);
 	//std::cout << vel.getX() << " " << vel.getY() << " " << vel.getZ() << "\n";
 	drag->applyForce(this);
-	crosshair->step(dt);
+	if (crosshair) crosshair->step(dt);
 	auto vec = custom::Vector3::convert(dynActor->getLinearVelocity());
 	if (vec.mod() < stop_threshold) {
 		//std::cout << vec.mod() << "\n";
@@ -66,8 +66,8 @@ void physics::PlayerShip::step(double dt)
 	DynamicPhysicsObject::step(dt);
 	drag->translate(delta);
 	firing_system->translate(delta);
-	crosshair->translate(delta);
-	spring->applyForce(crosshair);
+	if (crosshair)crosshair->translate(delta);
+	if (crosshair)spring->applyForce(crosshair);
 }
 
 void physics::PlayerShip::translate(custom::Vector3 v)
@@ -90,9 +90,31 @@ void physics::PlayerShip::reset()
 	//crosshair->resetMovement();
 	//crosshair->setPosition(init_pos+ custom::Vector3(-200, 0, 0));
 	//drag->reset();
+	if (crosshair) {
+		delete crosshair; crosshair = nullptr;
+	}
+	phys_particle_config crosshair_config(init_pos + custom::Vector3(-200, 0, 0), custom::Vector3::blank(), 10.0, 10, { 0,0,0,1 });
+	crosshair = new Crosshair(scene,crosshair_config);
 	spring->reset();
 	//firing_system->reset();
-	crosshair->reset();
+}
+
+void physics::PlayerShip::reset_stage_1()
+{
+	physics::DynamicPhysicsObject::reset();
+	if (crosshair) {
+		delete crosshair; crosshair = nullptr;
+	}
+	spring->reset();
+}
+
+void physics::PlayerShip::reset_stage_2()
+{
+	if (crosshair) {
+		delete crosshair; crosshair = nullptr;
+	}
+	phys_particle_config crosshair_config(init_pos + custom::Vector3(-200, 0, 0), custom::Vector3::blank(), 10.0, 10, { 0,0,0,1 });
+	crosshair = new Crosshair(scene, crosshair_config);
 }
 
 physics::EnemyShip::EnemyShip(physx::PxScene* s, phys_particle_config config, int i):PhysicsShip(s,config),index(i)

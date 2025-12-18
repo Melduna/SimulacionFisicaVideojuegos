@@ -52,7 +52,7 @@ namespace physics {
 	class PhysicsParticleSystem : public DynamicPhysicsObject {
 	public:
 		PhysicsParticleSystem(physx::PxScene* s);
-		~PhysicsParticleSystem() {};
+		~PhysicsParticleSystem();
 		inline void add_gen(PhysicsParticleGenerator* p) { gens.push_back(p); }
 		inline void add_force(PhysicsForceGenerator* p) { forces.push_back(p); }
 		inline void fire() { gens.front()->generate(); }
@@ -66,7 +66,7 @@ namespace physics {
 		}
 		inline std::list<PhysicsParticleGenerator*>& get_gens() { return gens; };
 		void step(double t) override;
-		//void translate(custom::Vector3 t) override;
+		void translate(custom::Vector3 v) override;
 	protected:
 		std::list<PhysicsParticleGenerator*> gens;
 		std::list<PhysicsForceGenerator*> forces;

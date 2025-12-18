@@ -3,7 +3,6 @@
 physics::PhysicsParticleGenerator::PhysicsParticleGenerator(physx::PxScene* s, phys_gen_config g, phys_particle_config pa):DynamicPhysicsObject(s)
 {
 	dynActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
-
 }
 
 physics::PhysicsParticleGenerator::~PhysicsParticleGenerator()
@@ -32,7 +31,7 @@ void physics::PhysicsParticleGenerator::step(double t)
 void physics::PhysicsParticleGenerator::generate()
 {
 	for (int i = 0; i < gen_count;i++) {
-		DynamicPhysicsObject* aux;
+		SphereParticle* aux;
 		phys_particle_config conf_aux = pa_config;
 		conf_aux.position += getPosition();
 		custom::Vector3 vec_aux = custom::Vector3::blank();
@@ -41,7 +40,7 @@ void physics::PhysicsParticleGenerator::generate()
 		else if (dist == UNIFORM)
 			vec_aux = custom::Vector3(Distributions::next_uniform(), Distributions::next_uniform(), Distributions::next_uniform());
 		conf_aux.position += vec_aux - custom::Vector3(0.5, 0.5, 0.5);
-		aux = new physics::DynamicPhysicsObject(scene,conf_aux);
+		aux = new physics::SphereParticle(scene,conf_aux);
 
 		particles.push_back(aux);
 	}
@@ -64,6 +63,17 @@ void physics::TimedPhysicsParticleGenerator::step(double t)
 
 physics::PhysicsParticleSystem::PhysicsParticleSystem(physx::PxScene* s):DynamicPhysicsObject(s)
 {
+	dynActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
+}
+
+physics::PhysicsParticleSystem::~PhysicsParticleSystem()
+{
+	for (auto p : forces) {
+		if (p) delete p;
+	}
+	for (auto p : gens) {
+		if (p) delete p;
+	}
 }
 
 void physics::PhysicsParticleSystem::step(double t)
@@ -90,10 +100,21 @@ void physics::PhysicsParticleSystem::step(double t)
 			for (auto& g : gens) {
 				auto parts = g->getParticles();
 				for (auto p : parts) {
-					(*it2)->apply_force(p);
+					(*it2)->applyForce(p);
 				}
 			}
 			it2++;
 		}
+	}
+}
+
+void physics::PhysicsParticleSystem::translate(custom::Vector3 v)
+{
+	DynamicPhysicsObject::translate(v);
+	for (auto f : forces) {
+		if (f) f->translate(v);
+	}
+	for (auto g : gens) {
+		if (g) g->translate(v);
 	}
 }

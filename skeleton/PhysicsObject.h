@@ -14,18 +14,21 @@ namespace physics {
 		double size;
 		Vector4 color;
 		double lifetime;
+		bool timed;
 		phys_particle_config(custom::Vector3 p = custom::Vector3::blank(),
 			custom::Vector3 v = custom::Vector3::blank(),
 			double m = 1.0,
 			double s = 10,
 			Vector4 c = { 1,1,1,1 },
-			double l = 1.0) {
+			double l = 1.0,
+			bool t = false) {
 			position = p;
 			velocity = v;
 			mass = m;
 			size = s;
 			color = c;
 			lifetime = l;
+			timed = t;
 		}
 		void operator=(phys_particle_config& other) {
 			position = other.position;
@@ -37,16 +40,10 @@ namespace physics {
 	};
 	class PhysicsObject {
 	public:
-		PhysicsObject(physx::PxScene* s) :scene(s) {
-			auto gphysics = &PxGetPhysics();
-			mat = gphysics->createMaterial(1.0f,1.0f,1.0f);
-		};
-		~PhysicsObject() {
-			if (_renderItem)
-				DeregisterRenderItem(_renderItem);
-			for (auto c : children) if (c) delete c;
-		}
+		PhysicsObject(physx::PxScene* s);
+		~PhysicsObject();
 		virtual void step(double dt);
+		virtual void translate(custom::Vector3 v);
 		void setParent(PhysicsObject* parent);
 		void addChild(PhysicsObject* child);
 		inline bool isAlive() const { return alive; }
@@ -62,27 +59,19 @@ namespace physics {
 		std::list<PhysicsObject*> children = std::list<PhysicsObject*>();
 		PhysicsObject* parent = nullptr;
 
+		custom::Vector3 last_pos;
+		custom::Vector3 new_pos;
+
 	};
 	class StaticPhysicsObject : public PhysicsObject {
 	public:
-		StaticPhysicsObject(physx::PxScene* s, phys_particle_config config = phys_particle_config()) :PhysicsObject(s) {
-			auto gphysics = &PxGetPhysics();
-			stcActor = gphysics->createRigidStatic(physx::PxTransform(config.position.converted(), physx::PxQuat(physx::PxIdentity)));
-			stcActor->getGlobalPose();
-			actor = stcActor;
-			scene->addActor(*stcActor);
-		}
+		StaticPhysicsObject(physx::PxScene* s, phys_particle_config config = phys_particle_config());
 	protected:
 		physx::PxRigidStatic* stcActor = nullptr;
 	};
 	class DynamicPhysicsObject : public PhysicsObject {
 	public:
-		DynamicPhysicsObject(physx::PxScene* s, phys_particle_config config = phys_particle_config()) :PhysicsObject(s) {
-			auto gphysics = &PxGetPhysics();
-			dynActor = gphysics->createRigidDynamic(physx::PxTransform(config.position.converted(), physx::PxQuat(physx::PxIdentity)));
-			actor = dynActor;
-			scene->addActor(*dynActor);
-		}
+		DynamicPhysicsObject(physx::PxScene* s, phys_particle_config config = phys_particle_config());
 		custom::Vector3 getDirection();
 		void addForce(custom::Vector3 f);
 	protected:
@@ -91,16 +80,7 @@ namespace physics {
 	};
 	class SphereParticle : public DynamicPhysicsObject {
 	public:
-		SphereParticle(physx::PxScene* s, phys_particle_config config = phys_particle_config()) :
-			DynamicPhysicsObject(s, config) {
-			auto gphysics = &PxGetPhysics();
-			auto sphere = gphysics->createShape(physx::PxSphereGeometry(config.size), *mat);
-			_renderItem = new RenderItem(sphere,dynActor, {1,1,1,1});
-			dynActor->attachShape(*sphere);
-			dynActor->setMass(config.mass);
-			physx::PxRigidBodyExt::updateMassAndInertia(*dynActor, config.mass / (4 * pow(config.size, 3) * PI / 3));
-			dynActor->setLinearVelocity(config.velocity.converted());
-		}
+		SphereParticle(physx::PxScene* s, phys_particle_config config = phys_particle_config());
 	protected:
 	};
 }

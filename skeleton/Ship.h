@@ -67,7 +67,7 @@ public:
 
 		bullet_drag = new WindGen(custom::Vector3::convert(pose.p), custom::Vector3(10, 0, 0));
 		firing_system->add_force(bullet_drag);
-		drag = new WindGen(custom::Vector3::convert(pose.p), custom::Vector3::blank(), 0.02);
+		drag = new WindGen(custom::Vector3::convert(pose.p), custom::Vector3::blank(), 0.5);
 		max_speed = 200.0;
 	}
 	~Ship() {
@@ -78,13 +78,15 @@ public:
 	inline void step(double dt) override {
 		firing_system->step(dt);
 		blast_system->step(dt);
+		drag->apply_force(this);
 		//std::cout << vel.getX() << " " << vel.getY() << " " << vel.getZ() << "\n";
 		if (vel.mod() < stop_threshold) {
 			vel = custom::Vector3::blank();
 			accel = custom::Vector3::blank();
 		}
 		//drag->redirect(vel * -1);
-		drag->apply_force(this);
+		std::cout << vel.mod() << "\n";
+
 		Particle::step(dt); 
 	}
 	inline void set_accel(Direction d) {
@@ -114,5 +116,5 @@ protected:
 	ParticleSystem* blast_system;
 	WindGen* bullet_drag;
 	WindGen* drag;
-	double stop_threshold = 0.5;
+	double stop_threshold = 3.0;
 };

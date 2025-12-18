@@ -38,6 +38,7 @@ void GameManager::resetGame()
 	p_ship->setOpacity(0);
 	texts[1] = "Pulsa Z para comenzar";
 	texts[2] = "";
+	texts[3] = "";
 	round = 0;
 	lives = maxLives;
 	currentLevel = -1;
@@ -69,7 +70,7 @@ void GameManager::readLevel(int level)
 
 void GameManager::startRound()
 {
-	texts[2] = "Ronda: " + std::to_string(round) + " Vidas: " + std::to_string(lives);
+	texts[2] = "Ronda: " + std::to_string(round+1) + " Vidas: " + std::to_string(lives);
 	p_ship->setOpacity(0);
 	p_ship->reset_stage_1();
 	remainingTimeout = levelTimeout;
@@ -79,6 +80,7 @@ void GameManager::startRound()
 void GameManager::startLevel()
 {
 	texts[1] = "";
+	texts[2] = "";
 	texts[3] = "";
 	p_ship->reset_stage_2();
 	int newlevel = -1;
@@ -117,7 +119,7 @@ void GameManager::endLevel(bool win)
 void GameManager::gameOver()
 {
 	texts[1] = "GAME OVER";
-	texts[2] = "Ronda final: "+ std::to_string(round);
+	texts[2] = "Ronda final: "+ std::to_string(round+1);
 	texts[3] = "Pulsa Z para reiniciar.";
 	setState(GAMEOVER);
 }

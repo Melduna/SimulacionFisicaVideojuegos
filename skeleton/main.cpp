@@ -11,6 +11,7 @@
 #include "ParticleSystem.h"
 #include "Ship.h"
 #include "PhysicsObject.h"
+#include "GameManager.h"
 
 #include <iostream>
 
@@ -37,6 +38,7 @@ ContactReportCallback gContactReportCallback;
 Ship* ship = nullptr;
 
 ParticleGenerator* camera_shot = nullptr;
+GameManager* gameManager = nullptr;
 
 void create_ship() {
 	camera_shot->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 1000);
@@ -82,6 +84,8 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 
+	gameManager = new GameManager(gScene);
+
 	projectile_config temp{
 		{
 			custom::Vector3::blank(),
@@ -111,6 +115,7 @@ void stepPhysics(bool interactive, double t)
 	PX_UNUSED(interactive);
 	if (ship) ship->step(t);
 	camera_shot->step(t);
+	gameManager->step(t);
 	//myparticle->integrate(t);
 	//myprojectile->integrate(t);
 	//firing_system->step(t);
@@ -145,7 +150,7 @@ void keyPress(unsigned char key, const PxTransform& camera)
 {
 	PX_UNUSED(camera);
 	char temp = toupper(key);
-
+	gameManager->keyPressed(temp);
 	switch(temp)
 	{
 	//case 'B': break;
@@ -170,8 +175,8 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		////TODO: Fire projectile
 		//firing_system->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 10);
 		//firing_system->generate();
-		if (ship) ship->fire();
-		else create_ship();
+		//if (ship) ship->fire();
+		//else create_ship();
 		break;
 	}
 	case'X':

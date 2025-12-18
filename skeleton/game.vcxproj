@@ -257,6 +257,7 @@
     <ClCompile Include="Buoyancy.cpp" />
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="ForceGenerator.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -276,6 +277,7 @@
     <ClInclude Include="core.hpp" />
     <ClInclude Include="Distributions.h" />
     <ClInclude Include="ForceGenerator.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="PhysicsForceGenerator.h" />

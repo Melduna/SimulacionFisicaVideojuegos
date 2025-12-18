@@ -59,7 +59,7 @@ void physics::PhysicsSpringGen::applyForce(DynamicPhysicsObject* particle)
 	custom::Vector3 vec = _other->getPosition() - particle->getPosition();
 	custom::Vector3 force;
 
-	const float length = vec.normalized().mod();
+	const float length = vec.normalize();
 	const float delta_x = length - _resting_length;
 
 	force = vec * delta_x * _k;

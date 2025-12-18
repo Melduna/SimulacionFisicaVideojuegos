@@ -41,8 +41,10 @@ namespace custom {
 		float mod() {
 			return sqrt(x * x + y * y + z * z);
 		}
-		void normalize() {
-			*this = (*this * (1.0f / this->mod()));
+		float normalize() {
+			float mod = this->mod();
+			if (mod>0.001) *this = (*this * (1.0f / mod));
+			return mod;
 		}
 		Vector3 normalized() {
 			if (this->mod() < 0.0001) return *this;

@@ -1,7 +1,10 @@
 #include "PhysicsParticleSystem.h"
 #include "PhysicsForceGenerator.h"
-physics::PhysicsParticleGenerator::PhysicsParticleGenerator(physx::PxScene* s, phys_gen_config g, phys_particle_config pa):DynamicPhysicsObject(s)
+physics::PhysicsParticleGenerator::PhysicsParticleGenerator(physx::PxScene* s, phys_gen_config g, phys_particle_config pa):DynamicPhysicsObject(s,physics::phys_particle_config(g.origin)),pa_config(pa)
 {
+	gen_count = g.gen_count;
+	dist = g.dist;
+	interest_range = g.interest_range;
 	dynActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, true);
 }
 

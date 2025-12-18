@@ -20,6 +20,7 @@
     <ClCompile Include="PhysicsObject.cpp" />
     <ClCompile Include="PhysicsShip.cpp" />
     <ClCompile Include="PhysicsForceGenerator.cpp" />
+    <ClCompile Include="GameManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -42,6 +43,7 @@
     <ClInclude Include="PhysicsParticleSystem.h" />
     <ClInclude Include="PhysicsShip.h" />
     <ClInclude Include="PhysicsForceGenerator.h" />
+    <ClInclude Include="GameManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

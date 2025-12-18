@@ -15,13 +15,15 @@ namespace physics {
 		Vector4 color;
 		double lifetime;
 		bool timed;
+		bool gravity;
 		phys_particle_config(custom::Vector3 p = custom::Vector3::blank(),
 			custom::Vector3 v = custom::Vector3::blank(),
 			double m = 1.0,
 			double s = 10,
 			Vector4 c = { 1,1,1,1 },
 			double l = 1.0,
-			bool t = false) {
+			bool t = false,
+			bool g = false) {
 			position = p;
 			velocity = v;
 			mass = m;
@@ -29,6 +31,7 @@ namespace physics {
 			color = c;
 			lifetime = l;
 			timed = t;
+			gravity = g;
 		}
 		void operator=(phys_particle_config& other) {
 			position = other.position;
@@ -46,6 +49,7 @@ namespace physics {
 		virtual void translate(custom::Vector3 v);
 		void setParent(PhysicsObject* parent);
 		void addChild(PhysicsObject* child);
+		void setOpacity(double a);
 		inline bool isAlive() const { return alive; }
 		custom::Vector3 getPosition();
 	protected:
@@ -61,6 +65,7 @@ namespace physics {
 
 		custom::Vector3 last_pos;
 		custom::Vector3 new_pos;
+		custom::Vector3 delta;
 
 	};
 	class StaticPhysicsObject : public PhysicsObject {
@@ -74,13 +79,23 @@ namespace physics {
 		DynamicPhysicsObject(physx::PxScene* s, phys_particle_config config = phys_particle_config());
 		custom::Vector3 getDirection();
 		void addForce(custom::Vector3 f);
+		void step(double dt) override;
 	protected:
 		physx::PxRigidDynamic* dynActor = nullptr;
+		double max_speed = -1.0;
 
 	};
 	class SphereParticle : public DynamicPhysicsObject {
 	public:
 		SphereParticle(physx::PxScene* s, phys_particle_config config = phys_particle_config());
 	protected:
+	};
+	class Crosshair : public DynamicPhysicsObject {
+	public:
+		Crosshair(physx::PxScene* s, phys_particle_config config = phys_particle_config());
+	};
+	class Wall : public StaticPhysicsObject {
+	public:
+		Wall(physx::PxScene* s, phys_particle_config config = phys_particle_config(), bool vert = true);
 	};
 }

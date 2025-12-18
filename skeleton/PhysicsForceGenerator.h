@@ -23,7 +23,7 @@ namespace physics {
 	//};
 	class PhysicsWindGen :public PhysicsForceGenerator {
 	public:
-		inline PhysicsWindGen(physx::PxScene* s, custom::Vector3 center, custom::Vector3 d = custom::Vector3::blank(), double re = 0.0001, double t = 0.0, double ra = 50.0);
+		PhysicsWindGen(physx::PxScene* s, custom::Vector3 center, custom::Vector3 d = custom::Vector3::blank(), double re = 0.0001, double t = 0.0, double ra = 50.0);
 		void applyForce(DynamicPhysicsObject*) override;
 		inline void redirect(custom::Vector3 v) { direction = v.normalized(); };
 	protected:
@@ -42,7 +42,7 @@ namespace physics {
 	//};
 	class PhysicsExplosionGen :public PhysicsForceGenerator {
 	public:
-		inline PhysicsExplosionGen(physx::PxScene* s, custom::Vector3 p, double i = 50.0, double t = 5.0, double r = 50.0, double R = 200.0);
+		PhysicsExplosionGen(physx::PxScene* s, custom::Vector3 p, double i = 50.0, double t = 5.0, double r = 50.0, double R = 200.0);
 		void step(double t) override { PhysicsObject::step(t); }
 		void applyForce(DynamicPhysicsObject*) override;
 	protected:

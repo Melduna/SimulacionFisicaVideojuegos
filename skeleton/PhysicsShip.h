@@ -1,9 +1,9 @@
 #pragma once
-#include "PhysicsObject.h"
-#include "PhysicsParticleSystem.h"
 #include "PhysicsForceGenerator.h"
+class GameManager;
+
 namespace physics {
-	enum Direction
+	enum PhysDirection
 	{
 		UP = 0,
 		DOWN = 1,
@@ -11,7 +11,7 @@ namespace physics {
 		RIGHT = 3,
 		NONE = 4
 	};
-	custom::Vector3 dirs[] = {
+	static custom::Vector3 physdirs[]{
 		custom::Vector3(0,1.0,0),
 		custom::Vector3(0,-1.0,0),
 		custom::Vector3(0,0,+1.0),
@@ -22,33 +22,45 @@ namespace physics {
 	public:
 		PhysicsShip(physx::PxScene* s, phys_particle_config config = phys_particle_config());
 	protected:
+		GameManager* gameManager = nullptr;
 	};
 	class PlayerShip : public PhysicsShip {
 	public:
 		PlayerShip(physx::PxScene* s, phys_particle_config config = phys_particle_config());
 		~PlayerShip();
 		void step(double dt) override;
-		inline void set_accel(Direction d) {
-			custom::Vector3 force = dirs[d] * move_intensity;
+		inline void set_accel(PhysDirection d) {
+			custom::Vector3 force = physdirs[d] * move_intensity;
 			//std::cout << force.getX() << " " << force.getY() << " " << force.getZ() << "\n";
 			addForce(force);
 		}
 		void translate(custom::Vector3 v) override;
-		inline void fire() {
-			firing_system->fire_at(0);
-		}
-		inline void blast() {
-			blast_system->fire_at(0);
-			blast_system->add_force(new PhysicsExplosionGen(scene,custom::Vector3::convert(actor->getGlobalPose().p), 50.0));
-		}
+		void fire();
+		//inline void blast() {
+		//	blast_system->fire_at(0);
+		//	blast_system->add_force(new PhysicsExplosionGen(scene, custom::Vector3::convert(actor->getGlobalPose().p), 50.0));
+		//}
 		inline void toggle_drag() { drag->set_active(!drag->get_active()); }
+		void resetPosition();
 		//inline void toggle_bullet_drag() { bullet_drag->set_active(!bullet_drag->get_active()); }
 	protected:
-		double move_intensity = 10000.0;
-		PhysicsParticleSystem* firing_system;
-		PhysicsParticleSystem* blast_system;
+		double move_intensity = 500.0;
+		PhysicsParticleSystem* firing_system = nullptr;
+		physics::Crosshair* crosshair = nullptr;
+		PhysicsSpringGen* spring = nullptr;
+		//PhysicsParticleSystem* blast_system;
 		//PhysicsWindGen* bullet_drag;
-		PhysicsWindGen* drag;
-		double stop_threshold = 0.5;
+		PhysicsWindGen* drag = nullptr;
+		double stop_threshold = 0.005;
+		custom::Vector3 init_pos;
+	};
+	class EnemyShip : public PhysicsShip {
+	public:
+		EnemyShip(physx::PxScene* s, phys_particle_config config = phys_particle_config());
+		~EnemyShip();
+		void step(double dt) override;
+		void die();
+	protected:
+		PhysicsParticleSystem* blast;
 	};
 }

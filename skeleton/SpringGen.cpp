@@ -28,5 +28,4 @@ AnchoredSpringGen::AnchoredSpringGen(double k, double resting_length, custom::Ve
 
 AnchoredSpringGen::~AnchoredSpringGen()
 {
-	delete _other;
 }

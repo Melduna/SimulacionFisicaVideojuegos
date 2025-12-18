@@ -58,10 +58,16 @@ custom::Vector3 physics::PhysicsObject::getPosition()
 	return custom::Vector3::blank();
 }
 
+void physics::PhysicsObject::setPosition(custom::Vector3 v)
+{
+	actor->setGlobalPose(physx::PxTransform(v.converted()));
+}
+
 physics::DynamicPhysicsObject::DynamicPhysicsObject(physx::PxScene* s, phys_particle_config config) :
 	PhysicsObject(s) 
 {
 
+	init_pos = config.position;
 
 	last_pos = config.position;
 	auto gphysics = &PxGetPhysics();
@@ -93,6 +99,19 @@ void physics::DynamicPhysicsObject::step(double dt)
 		dynActor->setLinearVelocity(vel.converted());
 		dynActor->clearForce();
 	}
+}
+
+void physics::DynamicPhysicsObject::reset()
+{
+	actor->setGlobalPose(physx::PxTransform(init_pos.converted()));
+	dynActor->clearForce();
+	dynActor->setLinearVelocity(Vector3(0, 0, 0));
+}
+
+void physics::DynamicPhysicsObject::resetMovement()
+{
+	dynActor->clearForce();
+	dynActor->setLinearVelocity(Vector3(0, 0, 0));
 }
 
 physics::StaticPhysicsObject::StaticPhysicsObject(physx::PxScene* s, phys_particle_config config) :

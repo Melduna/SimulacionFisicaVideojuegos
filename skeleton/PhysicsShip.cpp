@@ -15,7 +15,6 @@ physics::PlayerShip::PlayerShip(physx::PxScene* s, phys_particle_config config):
 		physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X |
 		physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y |
 		physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z);
-	init_pos = config.position;
 	firing_system = new PhysicsParticleSystem(scene);
 	phys_particle_config proj1(
 		custom::Vector3(-100,0,0),
@@ -34,12 +33,14 @@ physics::PlayerShip::PlayerShip(physx::PxScene* s, phys_particle_config config):
 	crosshair = new Crosshair(s,crosshair_config);
 	drag = new PhysicsWindGen(s,config.position, custom::Vector3::blank(), 0.01);
 	max_speed = 600.0;
-	spring = new PhysicsSpringGen(s, 10.0, 200, this);
+	spring = new PhysicsSpringGen(s, 20.0, 200, this);
 }
 
 physics::PlayerShip::~PlayerShip()
 {
 	delete firing_system;
+	delete crosshair;
+	delete spring;
 	//delete blast_system;
 	delete drag;
 }
@@ -83,12 +84,18 @@ void physics::PlayerShip::fire()
 	firing_system->fire_at(0);
 }
 
-void physics::PlayerShip::resetPosition()
+void physics::PlayerShip::reset()
 {
-	actor->setGlobalPose(physx::PxTransform(init_pos.converted()));
+	physics::DynamicPhysicsObject::reset();
+	//crosshair->resetMovement();
+	//crosshair->setPosition(init_pos+ custom::Vector3(-200, 0, 0));
+	//drag->reset();
+	//spring->reset();
+	//firing_system->reset();
+	crosshair->reset();
 }
 
-physics::EnemyShip::EnemyShip(physx::PxScene* s, phys_particle_config config):PhysicsShip(s,config)
+physics::EnemyShip::EnemyShip(physx::PxScene* s, phys_particle_config config, int i):PhysicsShip(s,config),index(i)
 {
 	blast = new PhysicsParticleSystem(scene);
 	phys_particle_config shrapnel(config.position,custom::Vector3::blank(),1.0,5.0,{1,0,0,1});
@@ -97,6 +104,10 @@ physics::EnemyShip::EnemyShip(physx::PxScene* s, phys_particle_config config):Ph
 	dynActor->setRigidDynamicLockFlags(
 		physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z |
 		physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y);
+
+	char name[6];
+	sprintf(name,"ship_%d", i);
+	dynActor->setName(name);
 }
 
 physics::EnemyShip::~EnemyShip()
@@ -110,9 +121,14 @@ void physics::EnemyShip::step(double dt)
 	blast->step(dt);
 }
 
-void physics::EnemyShip::die()
+bool physics::EnemyShip::die()
 {
-	setOpacity(0);
-	blast->fire_at(0);
-	blast->add_force(new PhysicsExplosionGen(scene, custom::Vector3::convert(dynActor->getGlobalPose().p), 50.0));
+	if (alive) {
+		setOpacity(0);
+		blast->fire_at(0);
+		blast->add_force(new PhysicsExplosionGen(scene, custom::Vector3::convert(dynActor->getGlobalPose().p), 50.0));
+		alive = false;
+		return true;
+	}
+	return false;
 }

@@ -52,6 +52,7 @@ namespace physics {
 		void setOpacity(double a);
 		inline bool isAlive() const { return alive; }
 		custom::Vector3 getPosition();
+		void setPosition(custom::Vector3 v);
 	protected:
 		bool alive = true;
 		bool timed = false;
@@ -80,9 +81,12 @@ namespace physics {
 		custom::Vector3 getDirection();
 		void addForce(custom::Vector3 f);
 		void step(double dt) override;
+		virtual void reset();
+		void resetMovement();
 	protected:
 		physx::PxRigidDynamic* dynActor = nullptr;
 		double max_speed = -1.0;
+		custom::Vector3 init_pos;
 
 	};
 	class SphereParticle : public DynamicPhysicsObject {

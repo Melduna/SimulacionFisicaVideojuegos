@@ -35,25 +35,25 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
-Ship* ship = nullptr;
-
-ParticleGenerator* camera_shot = nullptr;
+//Ship* ship = nullptr;
+//
+//ParticleGenerator* camera_shot = nullptr;
 GameManager* gameManager = nullptr;
 
-void create_ship() {
-	camera_shot->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 1000);
-	camera_shot->generate();
-	particle_config ship_conf{
-		custom::Vector3(-500,0,0),
-		custom::Vector3::blank(),
-		1.0,
-		10,
-		20,
-		0.0,
-		{1,1,1,1}
-	};
-	ship = new Ship(ship_conf);
-}
+//void create_ship() {
+//	camera_shot->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 1000);
+//	camera_shot->generate();
+//	particle_config ship_conf{
+//		custom::Vector3(-500,0,0),
+//		custom::Vector3::blank(),
+//		1.0,
+//		10,
+//		20,
+//		0.0,
+//		{1,1,1,1}
+//	};
+//	ship = new Ship(ship_conf);
+//}
 
 //Particle* myparticle;
 //Projectile* myprojectile;
@@ -98,7 +98,7 @@ void initPhysics(bool interactive)
 	gen_config temp2(custom::Vector3::convert(GetCamera()->getEye()), 1,
 		distribution::NORMAL);
 
-	camera_shot = new ProjectileGenerator(temp2,temp);
+	//camera_shot = new ProjectileGenerator(temp2,temp);
 	//PxTransform* spheretrans = new PxTransform(0, 0, 0);
 	//mysphere = new Sphere(spheretrans);
 	//RegisterRenderItem(mysphere);
@@ -113,8 +113,8 @@ void initPhysics(bool interactive)
 void stepPhysics(bool interactive, double t)
 {
 	PX_UNUSED(interactive);
-	if (ship) ship->step(t);
-	camera_shot->step(t);
+	//if (ship) ship->step(t);
+	//camera_shot->step(t);
 	gameManager->step(t);
 	//myparticle->integrate(t);
 	//myprojectile->integrate(t);
@@ -140,8 +140,8 @@ void cleanupPhysics(bool interactive)
 	
 	gFoundation->release();
 
-	delete ship;
-	delete camera_shot;
+	//delete ship;
+	//delete camera_shot;
 	//DeregisterRenderItem(mysphere);
 	}
 
@@ -159,50 +159,50 @@ void keyPress(unsigned char key, const PxTransform& camera)
 	{
 		break;
 	}
-	case 'Z':
-	{
-		//projectile_config temp{
-		//	{
-		//		custom::Vector3::convert(GetCamera()->getEye()),
-		//		custom::Vector3::convert(GetCamera()->getDir()) * 100,
-		//		0.2
-		//	},
-		//	10,
-		//	100
+	//case 'Z':
+	//{
+	//	//projectile_config temp{
+	//	//	{
+	//	//		custom::Vector3::convert(GetCamera()->getEye()),
+	//	//		custom::Vector3::convert(GetCamera()->getDir()) * 100,
+	//	//		0.2
+	//	//	},
+	//	//	10,
+	//	//	100
 
-		//};
-		//projectiles.push_back(new Projectile(temp));
-		////TODO: Fire projectile
-		//firing_system->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 10);
-		//firing_system->generate();
-		//if (ship) ship->fire();
-		//else create_ship();
-		break;
-	}
-	case'X':
-		if (ship) ship->blast();
-		break;
-	case 'I':
-		if (ship) ship->set_accel(UP);
-		break;
-	case 'J':
-		if (ship) ship->set_accel(LEFT);
-		break;
-	case 'K':
-		if (ship) ship->set_accel(DOWN);
-		break;
-	case 'L':
-		if (ship) ship->set_accel(RIGHT);
-		break;
-	case 'Q':
-		if (ship) ship->toggle_drag();
-		break;
-	case 'E':
-		if (ship) ship->toggle_bullet_drag();
-		break;
-	case 'P':
-		//new physics::SphereParticle(gScene,physics::phys_particle_config{});
-		break;
+	//	//};
+	//	//projectiles.push_back(new Projectile(temp));
+	//	////TODO: Fire projectile
+	//	//firing_system->update_direction(custom::Vector3::convert(GetCamera()->getDir()) * 10);
+	//	//firing_system->generate();
+	//	//if (ship) ship->fire();
+	//	//else create_ship();
+	//	break;
+	//}
+	//case'X':
+	//	if (ship) ship->blast();
+	//	break;
+	//case 'I':
+	//	if (ship) ship->set_accel(UP);
+	//	break;
+	//case 'J':
+	//	if (ship) ship->set_accel(LEFT);
+	//	break;
+	//case 'K':
+	//	if (ship) ship->set_accel(DOWN);
+	//	break;
+	//case 'L':
+	//	if (ship) ship->set_accel(RIGHT);
+	//	break;
+	//case 'Q':
+	//	if (ship) ship->toggle_drag();
+	//	break;
+	//case 'E':
+	//	if (ship) ship->toggle_bullet_drag();
+	//	break;
+	//case 'P':
+	//	//new physics::SphereParticle(gScene,physics::phys_particle_config{});
+	//	break;
 	default:
 		break;
 	}
@@ -210,8 +210,12 @@ void keyPress(unsigned char key, const PxTransform& camera)
 
 void onCollision(physx::PxActor* actor1, physx::PxActor* actor2)
 {
-	PX_UNUSED(actor1);
-	PX_UNUSED(actor2);
+	const char* name1 = actor1->getName();
+	const char* name2 = actor2->getName();
+	if (name1 && name1[0] == 's') 
+		gameManager->killShipAt(name1[5]-'0');
+	if (name2 && name2[0] == 's') 
+		gameManager->killShipAt(name2[5]-'0');
 }
 
 

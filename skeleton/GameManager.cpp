@@ -19,8 +19,17 @@ GameManager::GameManager(physx::PxScene* s)
 GameManager::~GameManager()
 {
 	delete p_ship;
-	for (auto e : e_ships) delete e;
 	for (auto w : walls) delete w;
+	deleteTargets();
+}
+
+void GameManager::deleteTargets()
+{
+	auto it = e_ships.begin();
+	while (it != e_ships.end()) {
+		delete* it;
+		it = e_ships.erase(it);
+	}
 }
 
 void GameManager::resetGame()
@@ -66,14 +75,17 @@ void GameManager::startRound()
 
 void GameManager::startLevel()
 {
+	p_ship->reset();
 	int newlevel = -1;
 	while (newlevel == -1 || newlevel == currentLevel) newlevel = gen(seed);
 	currentLevel = newlevel;
 	readLevel(currentLevel);
+	int i = 0;
 	for (custom::Vector3 pos : positions) {
 		physics::phys_particle_config aux = enemy_config;
 		aux.position = pos;
-		e_ships.push_back(new physics::EnemyShip(scene, aux));
+		e_ships.push_back(new physics::EnemyShip(scene, aux,i));
+		i++;
 	}
 	currentTimeLimit = max(baseTimeLimit - (0.5 * round), 2.0);
 	//p_ship->setOpacity(1.0);
@@ -82,12 +94,8 @@ void GameManager::startLevel()
 
 void GameManager::endLevel(bool win)
 {
-	auto it = e_ships.begin();
-	while (it != e_ships.end()) {
-			delete* it;
-			it = e_ships.erase(it);
-	}
-	p_ship->resetPosition();
+	deleteTargets();
+	p_ship->reset();
 	p_ship->setOpacity(0.0);
 	if (win)
 	{
@@ -145,11 +153,26 @@ void GameManager::keyPressed(char c)
 		}
 		break;
 	case GAMEOVER:
+		switch (c) {
+		case 'Z':
+			resetGame();
+			break;
+		default: break;
+		}
 		break;
 	}
 }
 
-void GameManager::killEnemy()
+void GameManager::killShipAt(int i)
+{
+	int j = 0;
+	for (auto s : e_ships) {
+		if (i == j && s->die()) enemyDown();
+		j++;
+	}
+}
+
+void GameManager::enemyDown()
 {
 	enemyCount--;
 	if (enemyCount <= 0) endLevel(true);
@@ -171,6 +194,8 @@ void GameManager::step(double dt)
 		if (remainingTimeout <= 0.0) startLevel();
 		break;
 	case GAME:
+		currentTimeLimit -= dt;
+		if (currentTimeLimit <= 0.0) endLevel(false);
 		p_ship->step(dt);
 		for (auto s : e_ships) s->step(dt);
 		break;

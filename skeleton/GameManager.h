@@ -20,6 +20,7 @@ class GameManager {
 public:
 	GameManager(physx::PxScene* s);
 	~GameManager();
+	void deleteTargets();
 	void resetGame();
 	void readLevel(int level);
 	void startRound();
@@ -28,7 +29,8 @@ public:
 	void gameOver();
 	void setState(State s);
 	void keyPressed(char c);
-	void killEnemy();
+	void killShipAt(int i);
+	void enemyDown();
 	
 	void step(double dt);
 private:

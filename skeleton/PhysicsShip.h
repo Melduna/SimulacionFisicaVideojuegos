@@ -41,7 +41,7 @@ namespace physics {
 		//	blast_system->add_force(new PhysicsExplosionGen(scene, custom::Vector3::convert(actor->getGlobalPose().p), 50.0));
 		//}
 		inline void toggle_drag() { drag->set_active(!drag->get_active()); }
-		void resetPosition();
+		void reset() override;
 		//inline void toggle_bullet_drag() { bullet_drag->set_active(!bullet_drag->get_active()); }
 	protected:
 		double move_intensity = 500.0;
@@ -52,15 +52,15 @@ namespace physics {
 		//PhysicsWindGen* bullet_drag;
 		PhysicsWindGen* drag = nullptr;
 		double stop_threshold = 0.005;
-		custom::Vector3 init_pos;
 	};
 	class EnemyShip : public PhysicsShip {
 	public:
-		EnemyShip(physx::PxScene* s, phys_particle_config config = phys_particle_config());
+		EnemyShip(physx::PxScene* s, phys_particle_config config = phys_particle_config(), int i = 0);
 		~EnemyShip();
 		void step(double dt) override;
-		void die();
+		bool die();
 	protected:
 		PhysicsParticleSystem* blast;
+		int index;
 	};
 }
